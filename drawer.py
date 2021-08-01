@@ -41,6 +41,8 @@ class Drawer():
         polygon2 = [(0.7, 0.25), (0.6, 0.9), (0.9, 0.95), (0.9, 0.05)]
         polygon3 = [(0.1, 0.4), (0.7, 0.25), (0.9, 0.05), (0.1, 0.1)]
         polygon4 = [(0.6, 0.9), (0.2, 0.65), (0.0, 0.7), (0.0, 1.0), (0.4, 1.0)]
+
+        big_polygon = [(0.1, 0.5), (0.15, 0.4), (0.25, 0.1), (0.4, 0.2), (0.7, 0.4), (0.75, 0.8), (0.6, 0.9), (0.4, 0.7)]
         square = [(0.4, 0.4), (0.4, 0.6), (0.6, 0.6), (0.6, 0.4)]
         with cairo.SVGSurface("example.svg", width, height) as surface:
             context = cairo.Context(surface)
@@ -57,10 +59,12 @@ class Drawer():
             # Draw polygon
             context.set_source_rgb(0, 0, 0)
             # self.draw_polygon(context, polygon1)
-            self.draw_polygon_spiral(context, 0.15, 50, polygon1)
-            self.draw_polygon_spiral(context, 0.15, 50, polygon2)
-            self.draw_polygon_spiral(context, 0.15, 50, polygon3)
-            self.draw_polygon_spiral(context, 0.15, 50, polygon4)
+            # self.draw_polygon_spiral(context, 0.15, 50, polygon1)
+            # self.draw_polygon_spiral(context, 0.15, 50, polygon2)
+            # self.draw_polygon_spiral(context, 0.15, 50, polygon3)
+            # self.draw_polygon_spiral(context, 0.15, 50, polygon4)
+
+            self.draw_polygon_spiral(context, 0.8, 50, big_polygon)
 
             # print(polygon1)
             # print(self.compute_inner_polygon(polygon1))
