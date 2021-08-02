@@ -1,0 +1,60 @@
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+  color: #333333;
+  font-size: 30px;
+}
+
+p {
+  color: #333333;
+}
+
+.grey-background {
+   background: #fdfdfd;
+}
+
+.description {
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.drawer {
+  margin: auto;
+  width: 1240px;
+  padding: 20px;
+  height: 600px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  background-color: white;
+}
+
+.sidebar {
+  width: 400px;
+  float: left;
+  padding: 0px 10px 0px 10px;
+  margin-left: 20px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+}
+
+.sidebar-title {
+  text-align: center;
+}
+
+#canvas {
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+  float: left;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: right;
+  font-style: italic;
+}
+
+.footer p {
+  padding-right:10px;
+}
