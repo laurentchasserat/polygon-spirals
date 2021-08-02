@@ -1,11 +1,28 @@
-function drawPolygon(coordinates, fillcolor = "None") {
-  // Retrieve canvas
-  var canvas = document.getElementById("the-canvas");
-  var ctx = canvas.getContext('2d');
+// Init variables
+var square = [{x: 20.0, y: 20.0}, {x: 20.0, y: 400.0},
+              {x: 400.0, y: 400.0}, {x: 400.0, y: 20.0}];
+var poly1 = [{x: 20.0, y: 400.0}, {x: 400.0, y: 400.0},
+             {x: 550.0, y: 500.0}, {x: 100.0, y: 580.0}];
+var poly2 = [{x: 400.0, y: 20.0}, {x: 400.0, y: 400.0},
+             {x: 550.0, y: 500.0}, {x: 750.0, y: 30.0}];
+var fullsizepoly = [{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
+                    {x: 800.0, y: 600.0}, {x: 800.0, y: 20.0}];
+
+var r = 0.15;
+var depth = 500;
+var polygons = [poly1, poly2, square];
+
+// Retrieve canvas
+var canvas = document.getElementById("the-canvas");
+// var canvasSVGContext = new CanvasSVG.Deferred();
+// canvasSVGContext.wrapCanvas(canvas);
+var ctx = canvas.getContext('2d');
+
+function drawPolygon(coordinates, fillcolor="None") {
 
   // Set linestyle
-  // ctx.strokeStyle = "black";
-  // ctx.lineWidth = 1;
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
 
   // Path init
   ctx.beginPath();
@@ -60,14 +77,39 @@ function drawPolygonSpiral(ratio, depth, polygonCoordinates) {
   }
 }
 
-var square = [{x: 20.0, y: 20.0}, {x: 20.0, y: 400.0},
-              {x: 400.0, y: 400.0}, {x: 400.0, y: 20.0}]
-var poly1 = [{x: 20.0, y: 400.0}, {x: 400.0, y: 400.0},
-             {x: 650.0, y: 500.0}, {x: 100.0, y: 580.0}]
-var poly2 = [{x: 400.0, y: 20.0}, {x: 400.0, y: 400.0},
-             {x: 650.0, y: 500.0}, {x: 750.0, y: 30.0}]
+function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#000") {
+  if (depth > 0) {
+    drawPolygon(polygonCoordinates, fillcolor=fill);
+    drawPolygonSpiralAltFill(ratio, depth - 1,
+                             computeInnerPolygon(ratio, polygonCoordinates),
+                             (fill == "#000" ? "#fff" : "#000"));
+  }
+}
 
-var r = 0.15
-drawPolygonSpiral(ratio=r, depth=35, polygonCoordinates=square);
-drawPolygonSpiral(ratio=r, depth=35, polygonCoordinates=poly1);
-drawPolygonSpiral(ratio=r, depth=35, polygonCoordinates=poly2);
+function clear() {
+  drawPolygon([{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
+               {x: 800.0, y: 600.0}, {x: 800.0, y: 0.0}], fillcolor="#fff")
+}
+
+function drawEverything() {
+  for (var i = 0; i < polygons.length; i++) {
+    drawPolygonSpiral(ratio=r, depth=depth, polygonCoordinates=polygons[i]);
+  }
+}
+
+function download() {
+  var dataURL = canvas.toDataURL("image/png");
+  var newTab = window.open('about:blank','image from canvas');
+  newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
+}
+
+var slider = document.getElementById("ratio");
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  clear();
+  r = slider.value
+  drawEverything()
+}
+
+drawEverything()
