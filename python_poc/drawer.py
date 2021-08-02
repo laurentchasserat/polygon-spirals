@@ -24,6 +24,7 @@ class Drawer():
 
         context.close_path()
         context.stroke()
+        return
 
     def draw_polygon_spiral(self, context, ratio, depth, polygon_coordinates):
         print(polygon_coordinates)
@@ -52,22 +53,19 @@ class Drawer():
 
             # Fill background
             context.set_source_rgb(1, 1, 1)
-            # context.rectangle(180, 20, 80, 80)
-            # context.fill()
             context.paint()
 
             # Draw polygon
             context.set_source_rgb(0, 0, 0)
+
             # self.draw_polygon(context, polygon1)
-            # self.draw_polygon_spiral(context, 0.15, 50, polygon1)
-            # self.draw_polygon_spiral(context, 0.15, 50, polygon2)
-            # self.draw_polygon_spiral(context, 0.15, 50, polygon3)
-            # self.draw_polygon_spiral(context, 0.15, 50, polygon4)
 
-            self.draw_polygon_spiral(context, 0.8, 50, big_polygon)
+            self.draw_polygon_spiral(context, 0.15, 50, polygon1)
+            self.draw_polygon_spiral(context, 0.15, 50, polygon2)
+            self.draw_polygon_spiral(context, 0.15, 50, polygon3)
+            self.draw_polygon_spiral(context, 0.15, 50, polygon4)
 
-            # print(polygon1)
-            # print(self.compute_inner_polygon(polygon1))
+            # self.draw_polygon_spiral(context, 0.8, 50, big_polygon)
 
             # Save as a SVG and PNG
             surface.write_to_png('example.png')

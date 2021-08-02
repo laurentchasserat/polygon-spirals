@@ -4,7 +4,7 @@ class Launcher:
     """
     A class to launch the program with the desired parameters.
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         pass
 
     def launch_drawing(self):
