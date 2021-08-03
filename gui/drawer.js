@@ -8,15 +8,19 @@ var poly2 = [{x: 400.0, y: 20.0}, {x: 400.0, y: 400.0},
 var fullsizepoly = [{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
                     {x: 800.0, y: 600.0}, {x: 800.0, y: 20.0}];
 
+var preset1 = [poly1, poly2, square];
+var preset2 = [poly1];
+
 var r = 0.15;
 var depth = 500;
-var polygons = [poly1, poly2, square];
+var polygons = preset1;
 
 // Retrieve canvas
 var canvas = document.getElementById("the-canvas");
 // var canvasSVGContext = new CanvasSVG.Deferred();
 // canvasSVGContext.wrapCanvas(canvas);
 var ctx = canvas.getContext('2d');
+var alternateColorsCheckbox = document.getElementById("alternate-colors");
 
 function drawPolygon(coordinates, fillcolor="None") {
 
@@ -87,8 +91,14 @@ function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#000")
 }
 
 function drawEverything() {
+  console.log();
   for (var i = 0; i < polygons.length; i++) {
-    drawPolygonSpiral(ratio=r, depth=depth, polygonCoordinates=polygons[i]);
+    if (alternateColorsCheckbox.checked) {
+      drawPolygonSpiralAltFill(ratio=r, depth=depth,
+                               polygonCoordinates=polygons[i], fill="#000");
+    } else {
+      drawPolygonSpiral(ratio=r, depth=depth, polygonCoordinates=polygons[i]);
+    }
   }
 }
 
@@ -103,13 +113,24 @@ function clearCanvas() {
                {x: 800.0, y: 600.0}, {x: 800.0, y: 0.0}], fillcolor="#fff")
 }
 
+function applyPreset(preset) {
+  clearCanvas();
+  polygons = preset;
+  drawEverything();
+}
+
 var slider = document.getElementById("ratio");
 
 // Update the current slider value (each time you drag the slider handle)
 slider.oninput = function() {
   clearCanvas();
-  r = slider.value
-  drawEverything()
+  r = slider.value;
+  drawEverything();
+}
+
+alternateColorsCheckbox.oninput = function() {
+  clearCanvas();
+  drawEverything();
 }
 
 drawEverything()
