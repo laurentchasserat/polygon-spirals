@@ -7,9 +7,17 @@ var poly2 = [{x: 400.0, y: 20.0}, {x: 400.0, y: 400.0},
              {x: 550.0, y: 500.0}, {x: 750.0, y: 30.0}];
 var fullsizepoly = [{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
                     {x: 800.0, y: 600.0}, {x: 800.0, y: 20.0}];
+var crossedPolygon = [{x: 400.0, y: 20.0}, {x: 550.0, y: 500.0},
+                      {x: 50.0, y: 550.0}, {x: 750.0, y: 30.0}];
+var crossedPolygon2 = [{x: 10.0, y: 30.0}, {x: 150.0, y: 15.0},
+                      {x: 300.0, y: 150.0}, {x: 20.0, y: 250.0},
+                      {x: 200.0, y: 300.0}];
+var triangleuh = [{x: 600.0, y: 200.0}, {x: 750.0, y: 500.0},
+                  {x: 550.0, y: 350.0}];
 
 var preset1 = [poly1, poly2, square];
 var preset2 = [poly1];
+var preset3 = [crossedPolygon, crossedPolygon2, triangleuh];
 
 var r = 0.15;
 var depth = 500;
@@ -20,7 +28,10 @@ var canvas = document.getElementById("the-canvas");
 // var canvasSVGContext = new CanvasSVG.Deferred();
 // canvasSVGContext.wrapCanvas(canvas);
 var ctx = canvas.getContext('2d');
+
+// Checkboxes
 var alternateColorsCheckbox = document.getElementById("alternate-colors");
+var autoMoveCheckbox = document.getElementById("auto-move");
 
 function drawPolygon(coordinates, fillcolor="None") {
 
@@ -91,7 +102,6 @@ function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#000")
 }
 
 function drawEverything() {
-  console.log();
   for (var i = 0; i < polygons.length; i++) {
     if (alternateColorsCheckbox.checked) {
       drawPolygonSpiralAltFill(ratio=r, depth=depth,
@@ -119,18 +129,48 @@ function applyPreset(preset) {
   drawEverything();
 }
 
-var slider = document.getElementById("ratio");
-
-// Update the current slider value (each time you drag the slider handle)
-slider.oninput = function() {
+function onRUpdate() {
   clearCanvas();
   r = slider.value;
   drawEverything();
 }
 
+var autoMovingUp = true;
+function autoMove() {
+  if (autoMoveCheckbox.checked) {
+    var currentR = parseFloat(slider.value);
+    if (autoMovingUp) {
+      var new_value = currentR + 0.01;
+      slider.value = new_value;
+      if (new_value == 0.99) {
+        autoMovingUp = false;
+      }
+    } else {
+      var new_value = currentR - 0.01;
+      slider.value = new_value;
+      if (new_value == 0.01) {
+        autoMovingUp = true;
+      }
+    }
+    onRUpdate();
+    setTimeout(function() { autoMove(); }, 25);
+  }
+}
+
+var slider = document.getElementById("ratio");
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  onRUpdate();
+}
+
 alternateColorsCheckbox.oninput = function() {
   clearCanvas();
   drawEverything();
+}
+
+autoMoveCheckbox.oninput = function() {
+  autoMove();
 }
 
 drawEverything()
