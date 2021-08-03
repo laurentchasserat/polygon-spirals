@@ -138,22 +138,22 @@ function onRUpdate() {
 var autoMovingUp = true;
 function autoMove() {
   if (autoMoveCheckbox.checked) {
-    var currentR = parseFloat(slider.value);
+    var currentR = Math.round(parseFloat(slider.value) * 1000);
     if (autoMovingUp) {
-      var new_value = currentR + 0.01;
-      slider.value = new_value;
-      if (new_value == 0.99) {
+      var new_value = currentR + 5;
+      slider.value = new_value / 1000.0;
+      if (new_value == 990) {
         autoMovingUp = false;
       }
     } else {
-      var new_value = currentR - 0.01;
-      slider.value = new_value;
-      if (new_value == 0.01) {
+      var new_value = currentR - 5;
+      slider.value = new_value / 1000.0;
+      if (new_value == 10) {
         autoMovingUp = true;
       }
     }
     onRUpdate();
-    setTimeout(function() { autoMove(); }, 25);
+    setTimeout(function() { autoMove(); }, 2);
   }
 }
 
