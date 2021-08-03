@@ -86,28 +86,28 @@ function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#000")
   }
 }
 
-function clear() {
-  drawPolygon([{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
-               {x: 800.0, y: 600.0}, {x: 800.0, y: 0.0}], fillcolor="#fff")
-}
-
 function drawEverything() {
   for (var i = 0; i < polygons.length; i++) {
     drawPolygonSpiral(ratio=r, depth=depth, polygonCoordinates=polygons[i]);
   }
 }
 
-function download() {
+function downloadCanvasAsPng() {
   var dataURL = canvas.toDataURL("image/png");
   var newTab = window.open('about:blank','image from canvas');
   newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
+}
+
+function clearCanvas() {
+  drawPolygon([{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
+               {x: 800.0, y: 600.0}, {x: 800.0, y: 0.0}], fillcolor="#fff")
 }
 
 var slider = document.getElementById("ratio");
 
 // Update the current slider value (each time you drag the slider handle)
 slider.oninput = function() {
-  clear();
+  clearCanvas();
   r = slider.value
   drawEverything()
 }
