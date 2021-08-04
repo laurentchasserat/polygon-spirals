@@ -157,6 +157,8 @@ function downloadCanvasAsPng() {
 
 function downloadInformation() {
   info = {
+    width: width,
+    height: height,
     r: r,
     depth: depth,
     polygons: polygons,
