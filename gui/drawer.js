@@ -132,6 +132,7 @@ function applyPreset(preset) {
 function onRUpdate() {
   clearCanvas();
   r = slider.value;
+  document.getElementById('ratio-value').innerHTML = slider.value;
   drawEverything();
 }
 
@@ -173,4 +174,4 @@ autoMoveCheckbox.oninput = function() {
   autoMove();
 }
 
-drawEverything()
+onRUpdate()

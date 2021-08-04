@@ -79,6 +79,7 @@ p {
   width: 70%;
   background: #d3d3d3;
   transition: opacity .2s;
+  margin-right: 12px;
 }
 
 .slider:hover {
@@ -96,17 +97,23 @@ p {
   padding: 4px 8px;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  margin: 4px 2px;
   transition-duration: 0.4s;
   cursor: pointer;
   background-color: white;
   color: black;
   border: 1px solid #555555;
-  margin-bottom: 6px;
+  display: inline-block;
+  width: 100px;
 }
 
 .button:hover {
   background-color: #555555;
   color: white;
+}
+
+.group-of-buttons {
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 6px;
+  width:100%;
 }

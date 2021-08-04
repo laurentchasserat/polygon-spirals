@@ -29,6 +29,7 @@
 				<label class="inline-label" for="ratio-range">Ratio</label>
 			  <input type="range" id="ratio" name="ratio-range" min="0.01" max="0.99"
 						   value="0.15" step="0.005" class="slider">
+				<div id="ratio-value"></div>
 			</div>
  			<div class="options-entry">
  				<label for="alternate">Alternate colors</label>
@@ -43,18 +44,22 @@
 			<hr>
 			<p class="sidebar-subtitle">Irregular polygon layouts</p>
 			<div class="options-entry">
- 				<label for="alternate">Presets</label>
+ 				<label for="alternate"><b>Presets</b></label>
  			</div>
-			<button class="button" id="preset1-button" onclick="applyPreset(preset1);">Preset 1</button>
-			<button class="button" id="preset2-button" onclick="applyPreset(preset2);">Preset 2</button>
-			<button class="button" id="preset3-button" onclick="applyPreset(preset3);">Preset 3</button>
+			<div class="group-of-buttons">
+				<button class="button" id="preset1-button" onclick="applyPreset(preset1);">Preset 1</button>
+				<button class="button" id="preset2-button" onclick="applyPreset(preset2);">Preset 2</button>
+				<button class="button" id="preset3-button" onclick="applyPreset(preset3);">Preset 3</button>
+			</div>
 			<div class="options-entry">
- 				<label for="alternate">Create your custom layout!</label>
+ 				<label for="alternate"><b>Create your own custom layout!</b></label>
  			</div>
-			[Coming soon...]
+			<i>Coming soon...</i>
 			<hr>
-		  <button class="button" id="download-button" onclick="downloadCanvasAsPng();">Download</button>
-			<button class="button" id="clear-button" onclick="clearCanvas();">Clear</button>
+			<div class="group-of-buttons">
+			  <button class="button" id="download-button" onclick="downloadCanvasAsPng();">Download</button>
+				<button class="button" id="clear-button" onclick="clearCanvas();">Clear</button>
+			</div>
     </div>
   </div>
 
