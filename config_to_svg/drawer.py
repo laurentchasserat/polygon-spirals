@@ -27,46 +27,38 @@ class Drawer():
         return
 
     def draw_polygon_spiral(self, context, ratio, depth, polygon_coordinates):
-        print(polygon_coordinates)
         if depth > 0:
             self.draw_polygon(context, polygon_coordinates)
             self.draw_polygon_spiral(context, ratio, depth - 1,
                                      self.compute_inner_polygon(ratio, polygon_coordinates))
         return
 
-    def draw_picture(self):
+    def draw_picture(self, width, height, r, depth, parsed_polygons, alternate_colors):
         print('Now drawing a cool picture.')
-        width = 600
-        height = 600
-        polygon1 = [(0.1, 0.4), (0.7, 0.25), (0.6, 0.9), (0.2, 0.65)]
-        polygon2 = [(0.7, 0.25), (0.6, 0.9), (0.9, 0.95), (0.9, 0.05)]
-        polygon3 = [(0.1, 0.4), (0.7, 0.25), (0.9, 0.05), (0.1, 0.1)]
-        polygon4 = [(0.6, 0.9), (0.2, 0.65), (0.0, 0.7), (0.0, 1.0), (0.4, 1.0)]
+        polygons = []
+        for poly in parsed_polygons:
+            a_polygon = []
+            for point in poly:
+                a_polygon.append((float(point['x']) / width, int(point['y'])/ height))
+            polygons.append(a_polygon)
 
-        big_polygon = [(0.1, 0.5), (0.15, 0.4), (0.25, 0.1), (0.4, 0.2), (0.7, 0.4), (0.75, 0.8), (0.6, 0.9), (0.4, 0.7)]
-        square = [(0.4, 0.4), (0.4, 0.6), (0.6, 0.6), (0.6, 0.4)]
-        with cairo.SVGSurface("example.svg", width, height) as surface:
+        with cairo.SVGSurface("cool_drawing.svg", width, height) as surface:
             context = cairo.Context(surface)
 
             context.scale(width, height)
-            context.set_line_width(0.005)
+            context.set_line_width(0.002)
 
             # Fill background
-            context.set_source_rgb(1, 1, 1)
-            context.paint()
+            # context.set_source_rgb(1, 1, 1)
+            # context.paint()
 
             # Draw polygon
             context.set_source_rgb(0, 0, 0)
 
-            # self.draw_polygon(context, polygon1)
-
-            self.draw_polygon_spiral(context, 0.15, 50, polygon1)
-            self.draw_polygon_spiral(context, 0.15, 50, polygon2)
-            self.draw_polygon_spiral(context, 0.15, 50, polygon3)
-            self.draw_polygon_spiral(context, 0.15, 50, polygon4)
-
-            # self.draw_polygon_spiral(context, 0.8, 50, big_polygon)
+            for p in polygons:
+                print('Now drawing', p)
+                self.draw_polygon_spiral(context, r, depth, p)
 
             # Save as a SVG and PNG
-            surface.write_to_png('example.png')
+            surface.write_to_png('cool_drawing.png')
             surface.finish()
