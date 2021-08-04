@@ -31,7 +31,7 @@ After cloning the project and moving to its folder :
     pip install -r requirements.txt
     ```
 
-You are now ready to use the program. First customize the `config.json` file and then launch the command:
+You are now ready to use the program. First fill in a `config.json` file (for example with information extracted from the GUI), and then launch the command:
 
 ```
 python3 main.py ./config.json
