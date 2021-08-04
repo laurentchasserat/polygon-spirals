@@ -12,18 +12,20 @@ var height = canvas.height;
 var theColor = "#ddd"
 
 // Normalized polygon definitions
-var fullSizePoly = normalizedToRealPolygon(
-  [{x: 0.001, y: 0.001}, {x: 0.999, y: 0.001},
-   {x: 0.999, y: 0.999}, {x: 0.001, y: 0.999}]);
+
 var smallSquare = normalizedToRealPolygon(
-  [{x: 0.025, y: 0.033}, {x: 0.025, y: 0.666},
-   {x: 0.5, y: 0.666}, {x: 0.5, y: 0.033}]);
+  [{x: 0.0001, y: 0.001}, {x: 0.0001, y: 0.666},
+   {x: 0.5, y: 0.666}, {x: 0.5, y: 0.001}]);
 var poly1 = normalizedToRealPolygon(
-  [{x: 0.025, y: 0.666}, {x: 0.5, y: 0.666},
+  [{x: 0.0001, y: 0.666}, {x: 0.5, y: 0.666},
    {x: 0.6875, y: 0.833}, {x: 0.125, y: 0.966}]);
 var poly2 = normalizedToRealPolygon(
-  [{x: 0.5, y: 0.033}, {x: 0.5, y: 0.666},
+  [{x: 0.5, y: 0.001}, {x: 0.5, y: 0.666},
    {x: 0.6875, y: 0.833}, {x: 0.9375, y: 0.05}]);
+var deltaplaneuh = normalizedToRealPolygon(
+  [{x: 0.125, y: 0.966}, {x: 0.6875, y: 0.833},
+   {x: 0.9375, y: 0.05}, {x: 0.999, y: 0.999}]);
+
 var crossedPolygon = normalizedToRealPolygon(
   [{x: 0.5, y: 0.033}, {x: 0.6875, y: 0.833},
    {x: 0.0625, y: 0.916}, {x: 0.9375, y: 0.05}]);
@@ -33,8 +35,18 @@ var crossedPolygon2 = normalizedToRealPolygon(
 var triangleuh = normalizedToRealPolygon(
   [{x: 0.75, y: 0.333}, {x: 0.9375, y: 0.833}, {x: 0.6875, y: 0.583}]);
 
-var preset1 = [poly1, poly2, smallSquare];
-var preset2 = [fullSizePoly];
+var fullSizePoly = normalizedToRealPolygon(
+  [{x: 0.001, y: 0.001}, {x: 0.999, y: 0.001},
+   {x: 0.999, y: 0.999}, {x: 0.001, y: 0.999}]);
+// var losangeuh = normalizedToRealPolygon(
+//   [{x: 0.5, y: 0.001}, {x: 0.999, y: 0.5},
+//    {x: 0.5, y: 0.999}, {x: 0.001, y: 0.5}]);
+var losangeuh = normalizedToRealPolygon(
+  [{x: 0.5, y: 0.001}, {x: 0.001, y: 0.5},
+   {x: 0.5, y: 0.999}, {x: 0.999, y: 0.5}]);
+
+var preset1 = [deltaplaneuh, poly1, poly2, smallSquare];
+var preset2 = [fullSizePoly, losangeuh];
 var preset3 = [crossedPolygon, crossedPolygon2, triangleuh];
 
 var r = 0.15;
@@ -141,6 +153,18 @@ function downloadCanvasAsPng() {
   var dataURL = canvas.toDataURL("image/png");
   var newTab = window.open('about:blank','image from canvas');
   newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
+}
+
+function downloadInformation() {
+  info = {
+    r: r,
+    depth: depth,
+    polygons: polygons,
+    alternateColors: alternateColorsCheckbox.checked
+  };
+  console.log("Image information : " + JSON.stringify(info));
+  var newTab = window.open('about:blank','image info');
+  newTab.document.write(JSON.stringify(info));
 }
 
 function clearCanvas() {

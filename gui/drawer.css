@@ -109,6 +109,11 @@ p {
   border: 1px solid #555555;
   display: inline-block;
   width: 100px;
+  margin-bottom: 4px;
+}
+
+.button.large {
+  width: 204px;
 }
 
 .button:hover {
