@@ -9,6 +9,8 @@ var ctx = canvas.getContext('2d');
 var width = canvas.width;
 var height = canvas.height;
 
+var theColor = "#ddd"
+
 // Normalized polygon definitions
 var fullSizePoly = normalizedToRealPolygon(
   [{x: 0.001, y: 0.001}, {x: 0.999, y: 0.001},
@@ -115,12 +117,12 @@ function drawPolygonSpiral(ratio, depth, polygonCoordinates) {
   }
 }
 
-function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#ccc") {
+function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#fff") {
   if (depth > 0) {
     drawPolygon(polygonCoordinates, fillcolor=fill);
     drawPolygonSpiralAltFill(ratio, depth - 1,
                              computeInnerPolygon(ratio, polygonCoordinates),
-                             (fill == "#ccc" ? "#fff" : "#ccc"));
+                             (fill == theColor ? "#fff" : theColor));
   }
 }
 
@@ -128,7 +130,7 @@ function drawEverything() {
   for (var i = 0; i < polygons.length; i++) {
     if (alternateColorsCheckbox.checked) {
       drawPolygonSpiralAltFill(ratio=r, depth=depth,
-                               polygonCoordinates=polygons[i], fill="#ccc");
+                               polygonCoordinates=polygons[i], fill=theColor);
     } else {
       drawPolygonSpiral(ratio=r, depth=depth, polygonCoordinates=polygons[i]);
     }
