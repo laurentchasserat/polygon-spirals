@@ -9,7 +9,7 @@
   <!-- Roboto font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,500" rel="stylesheet">
 
   <!-- Stylesheet -->
   <link href="./drawer.css" rel="stylesheet">
@@ -23,24 +23,38 @@
     <canvas id="the-canvas" width="800" height="600"></canvas>
     <div class="sidebar">
       <p class="sidebar-title">Options</p>
-			<div>
+			<hr>
+      <p class="sidebar-subtitle">General options</p>
+			<div class="options-entry">
 				<label class="inline-label" for="ratio-range">Ratio</label>
 			  <input type="range" id="ratio" name="ratio-range" min="0.01" max="0.99"
 						   value="0.15" step="0.005" class="slider">
- 			  <button class="button" id="download-button" onclick="downloadCanvasAsPng();">Download</button>
- 				<button class="button" id="clear-button" onclick="clearCanvas();">Clear</button>
- 				<button class="button" id="preset1-button" onclick="applyPreset(preset1);">Preset 1</button>
- 				<button class="button" id="preset2-button" onclick="applyPreset(preset2);">Preset 2</button>
- 				<button class="button" id="preset3-button" onclick="applyPreset(preset3);">Preset 3</button>
-				<div>
-					<label for="alternate">Alternate colors</label>
-				  <input type="checkbox" id="alternate-colors" name="alternate">
-				</div>
-				<div>
-					<label for="auto-move">Auto-move</label>
-				  <input type="checkbox" id="auto-move" name="auto-move">
-				</div>
 			</div>
+ 			<div class="options-entry">
+ 				<label for="alternate">Alternate colors</label>
+ 			  <input type="checkbox" id="alternate-colors" name="alternate">
+ 			</div>
+ 			<div class="options-entry">
+ 				<label for="auto-move">Auto-move</label>
+ 			  <input type="checkbox" id="auto-move" name="auto-move">
+ 			</div>
+			<hr>
+			<p class="sidebar-subtitle">Regular polygon pavings</p>
+			<hr>
+			<p class="sidebar-subtitle">Irregular polygon layouts</p>
+			<div class="options-entry">
+ 				<label for="alternate">Presets</label>
+ 			</div>
+			<button class="button" id="preset1-button" onclick="applyPreset(preset1);">Preset 1</button>
+			<button class="button" id="preset2-button" onclick="applyPreset(preset2);">Preset 2</button>
+			<button class="button" id="preset3-button" onclick="applyPreset(preset3);">Preset 3</button>
+			<div class="options-entry">
+ 				<label for="alternate">Create your custom layout!</label>
+ 			</div>
+			[Coming soon...]
+			<hr>
+		  <button class="button" id="download-button" onclick="downloadCanvasAsPng();">Download</button>
+			<button class="button" id="clear-button" onclick="clearCanvas();">Clear</button>
     </div>
   </div>
 

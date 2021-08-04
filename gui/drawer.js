@@ -36,7 +36,7 @@ var autoMoveCheckbox = document.getElementById("auto-move");
 function drawPolygon(coordinates, fillcolor="None") {
 
   // Set linestyle
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = "#333";
   ctx.lineWidth = 2;
 
   // Path init
@@ -92,12 +92,12 @@ function drawPolygonSpiral(ratio, depth, polygonCoordinates) {
   }
 }
 
-function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#000") {
+function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#ccc") {
   if (depth > 0) {
     drawPolygon(polygonCoordinates, fillcolor=fill);
     drawPolygonSpiralAltFill(ratio, depth - 1,
                              computeInnerPolygon(ratio, polygonCoordinates),
-                             (fill == "#000" ? "#fff" : "#000"));
+                             (fill == "#ccc" ? "#fff" : "#ccc"));
   }
 }
 
@@ -105,7 +105,7 @@ function drawEverything() {
   for (var i = 0; i < polygons.length; i++) {
     if (alternateColorsCheckbox.checked) {
       drawPolygonSpiralAltFill(ratio=r, depth=depth,
-                               polygonCoordinates=polygons[i], fill="#000");
+                               polygonCoordinates=polygons[i], fill="#ccc");
     } else {
       drawPolygonSpiral(ratio=r, depth=depth, polygonCoordinates=polygons[i]);
     }
