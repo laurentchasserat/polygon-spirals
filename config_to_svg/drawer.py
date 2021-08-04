@@ -39,7 +39,7 @@ class Drawer():
         for poly in parsed_polygons:
             a_polygon = []
             for point in poly:
-                a_polygon.append((float(point['x']) / width, int(point['y'])/ height))
+                a_polygon.append((float(point['x']), float(point['y'])))
             polygons.append(a_polygon)
 
         with cairo.SVGSurface("cool_drawing.svg", width, height) as surface:

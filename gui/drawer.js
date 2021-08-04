@@ -156,12 +156,21 @@ function downloadCanvasAsPng() {
 }
 
 function downloadInformation() {
+  normalized_polygons = []
+  for (var i = 0; i < polygons.length; i++) {
+    normalized_polygon = []
+    for (var j = 0; j < polygons[i].length; j++) {
+      normalized_polygon.push({x: polygons[i][j].x / width,
+                               y: polygons[i][j].y / height})
+    }
+    normalized_polygons.push(normalized_polygon)
+  }
   info = {
     width: width,
     height: height,
     r: r,
     depth: depth,
-    polygons: polygons,
+    polygons: normalized_polygons,
     alternateColors: alternateColorsCheckbox.checked
   };
   console.log("Image information : " + JSON.stringify(info));
