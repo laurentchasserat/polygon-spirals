@@ -17,12 +17,17 @@ class Drawer():
             result.append((x1 + (ratio * (x2-x1)), (y1 + (ratio * (y2-y1)))))
         return result
 
-    def draw_polygon(self, context, points):
+    def draw_polygon(self, context, points, fill=None):
         context.move_to(points[0][0], points[0][1])
         for x, y in points[1:]:
             context.line_to(x, y)
 
         context.close_path()
+        if fill is not None:
+            context.set_source_rgb(fill[0], fill[1], fill[2])
+            context.fill_preserve()
+
+        context.set_source_rgb(0, 0, 0)
         context.stroke()
         return
 
@@ -31,6 +36,15 @@ class Drawer():
             self.draw_polygon(context, polygon_coordinates)
             self.draw_polygon_spiral(context, ratio, depth - 1,
                                      self.compute_inner_polygon(ratio, polygon_coordinates))
+        return
+
+    def draw_polygon_spiral_alt_fill(self, context, ratio, depth,
+                                     polygon_coordinates, fill):
+        if depth > 0:
+            self.draw_polygon(context, polygon_coordinates, fill=fill)
+            self.draw_polygon_spiral_alt_fill(context, ratio, depth - 1,
+                                     self.compute_inner_polygon(ratio, polygon_coordinates),
+                                     (0.8, 0.8, 0.8) if fill == (1, 1, 1) else (1, 1, 1))
         return
 
     def draw_picture(self, width, height, r, depth, parsed_polygons, alternate_colors):
@@ -57,7 +71,10 @@ class Drawer():
 
             for p in polygons:
                 print('Now drawing', p)
-                self.draw_polygon_spiral(context, r, depth, p)
+                if alternate_colors:
+                    self.draw_polygon_spiral_alt_fill(context, r, depth, p, (1, 1, 1))
+                else:
+                    self.draw_polygon_spiral(context, r, depth, p)
 
             # Save as a SVG and PNG
             surface.write_to_png('cool_drawing.png')
