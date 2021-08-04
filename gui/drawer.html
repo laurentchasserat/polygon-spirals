@@ -20,7 +20,7 @@
 		<p>This project aims at drawing nice pictures with nested polygons forming cool spirals. Nothing more, nothing less.</p>
 	</div>
   <div class="drawer">
-    <canvas id="the-canvas" width="800" height="600"></canvas>
+    <canvas id="the-canvas" width="1024" height="768"></canvas>
     <div class="sidebar">
       <p class="sidebar-title">Options</p>
 			<hr>
@@ -32,7 +32,7 @@
 				<div id="ratio-value"></div>
 			</div>
  			<div class="options-entry">
- 				<label for="alternate">Alternate colors</label>
+ 				<label for="alternate">Alternated fill</label>
  			  <input type="checkbox" id="alternate-colors" name="alternate">
  			</div>
  			<div class="options-entry">
@@ -41,10 +41,22 @@
  			</div>
 			<hr>
 			<p class="sidebar-subtitle">Regular polygon pavings</p>
+			<div class="options-entry">
+ 				Triangles
+ 			</div>
+			<div class="options-entry">
+ 				Squares
+ 			</div>
+			<div class="options-entry">
+ 				Losanges
+ 			</div>
+			<div class="options-entry">
+ 				Honeycomb
+ 			</div>
 			<hr>
 			<p class="sidebar-subtitle">Irregular polygon layouts</p>
 			<div class="options-entry">
- 				<label for="alternate"><b>Presets</b></label>
+ 				<b>Presets</b>
  			</div>
 			<div class="group-of-buttons">
 				<button class="button" id="preset1-button" onclick="applyPreset(preset1);">Preset 1</button>
@@ -52,7 +64,7 @@
 				<button class="button" id="preset3-button" onclick="applyPreset(preset3);">Preset 3</button>
 			</div>
 			<div class="options-entry">
- 				<label for="alternate"><b>Create your own custom layout!</b></label>
+ 				<b>Create your own custom layout!</b>
  			</div>
 			<i>Coming soon...</i>
 			<hr>
@@ -62,12 +74,10 @@
 			</div>
     </div>
   </div>
-
-  <div class="footer darkgrey-text">
-    <p>Created by L. Chasserat and T. Petitfils</p>
-  </div>
-
 </body>
+<div class="footer darkgrey-text grey-background">
+	<p>Created by L. Chasserat and T. Petitfils</p>
+</div>
 
 <!-- JS -->
 <script type="text/javascript" src="./drawer.js"></script>

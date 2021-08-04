@@ -1,27 +1,4 @@
-// Init variables
-var square = [{x: 20.0, y: 20.0}, {x: 20.0, y: 400.0},
-              {x: 400.0, y: 400.0}, {x: 400.0, y: 20.0}];
-var poly1 = [{x: 20.0, y: 400.0}, {x: 400.0, y: 400.0},
-             {x: 550.0, y: 500.0}, {x: 100.0, y: 580.0}];
-var poly2 = [{x: 400.0, y: 20.0}, {x: 400.0, y: 400.0},
-             {x: 550.0, y: 500.0}, {x: 750.0, y: 30.0}];
-var fullsizepoly = [{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
-                    {x: 800.0, y: 600.0}, {x: 800.0, y: 20.0}];
-var crossedPolygon = [{x: 400.0, y: 20.0}, {x: 550.0, y: 500.0},
-                      {x: 50.0, y: 550.0}, {x: 750.0, y: 30.0}];
-var crossedPolygon2 = [{x: 10.0, y: 30.0}, {x: 150.0, y: 15.0},
-                      {x: 300.0, y: 150.0}, {x: 20.0, y: 250.0},
-                      {x: 200.0, y: 300.0}];
-var triangleuh = [{x: 600.0, y: 200.0}, {x: 750.0, y: 500.0},
-                  {x: 550.0, y: 350.0}];
-
-var preset1 = [poly1, poly2, square];
-var preset2 = [poly1];
-var preset3 = [crossedPolygon, crossedPolygon2, triangleuh];
-
-var r = 0.15;
-var depth = 500;
-var polygons = preset1;
+/* Init variables */
 
 // Retrieve canvas
 var canvas = document.getElementById("the-canvas");
@@ -29,14 +6,60 @@ var canvas = document.getElementById("the-canvas");
 // canvasSVGContext.wrapCanvas(canvas);
 var ctx = canvas.getContext('2d');
 
+var width = canvas.width;
+var height = canvas.height;
+
+// Normalized polygon definitions
+var fullSizePoly = normalizedToRealPolygon(
+  [{x: 0.001, y: 0.001}, {x: 0.999, y: 0.001},
+   {x: 0.999, y: 0.999}, {x: 0.001, y: 0.999}]);
+var smallSquare = normalizedToRealPolygon(
+  [{x: 0.025, y: 0.033}, {x: 0.025, y: 0.666},
+   {x: 0.5, y: 0.666}, {x: 0.5, y: 0.033}]);
+var poly1 = normalizedToRealPolygon(
+  [{x: 0.025, y: 0.666}, {x: 0.5, y: 0.666},
+   {x: 0.6875, y: 0.833}, {x: 0.125, y: 0.966}]);
+var poly2 = normalizedToRealPolygon(
+  [{x: 0.5, y: 0.033}, {x: 0.5, y: 0.666},
+   {x: 0.6875, y: 0.833}, {x: 0.9375, y: 0.05}]);
+var crossedPolygon = normalizedToRealPolygon(
+  [{x: 0.5, y: 0.033}, {x: 0.6875, y: 0.833},
+   {x: 0.0625, y: 0.916}, {x: 0.9375, y: 0.05}]);
+var crossedPolygon2 = normalizedToRealPolygon(
+  [{x: 0.0125, y: 0.05}, {x: 0.1875, y: 0.025},
+   {x: 0.375, y: 0.25}, {x: 0.025, y: 0.416}, {x: 0.25, y: 0.5}]);
+var triangleuh = normalizedToRealPolygon(
+  [{x: 0.75, y: 0.333}, {x: 0.9375, y: 0.833}, {x: 0.6875, y: 0.583}]);
+
+var preset1 = [poly1, poly2, smallSquare];
+var preset2 = [fullSizePoly];
+var preset3 = [crossedPolygon, crossedPolygon2, triangleuh];
+
+var r = 0.15;
+var depth = 500;
+var polygons = preset1;
+
 // Checkboxes
 var alternateColorsCheckbox = document.getElementById("alternate-colors");
 var autoMoveCheckbox = document.getElementById("auto-move");
 
-function drawPolygon(coordinates, fillcolor="None") {
+function normalizedToRealPolygon (normalizedPoly) {
+  result = [];
+  for (var i = 0; i < normalizedPoly.length; i++) {
+    result.push({x: normalizedPoly[i].x * width, y: normalizedPoly[i].y * height});
+  }
+  return result;
+}
+
+function drawPolygon(coordinates, fillcolor="None", noStroke=false) {
 
   // Set linestyle
-  ctx.strokeStyle = "#333";
+  if (noStroke) {
+    ctx.strokeStyle = "#fff";
+  } else {
+    ctx.strokeStyle = "#333";
+  }
+
   ctx.lineWidth = 2;
 
   // Path init
@@ -119,8 +142,7 @@ function downloadCanvasAsPng() {
 }
 
 function clearCanvas() {
-  drawPolygon([{x: 0.0, y: 0.0}, {x: 0.0, y: 600.0},
-               {x: 800.0, y: 600.0}, {x: 800.0, y: 0.0}], fillcolor="#fff")
+  drawPolygon(fullSizePoly, fillcolor="#fff", noStroke=true)
 }
 
 function applyPreset(preset) {
@@ -143,13 +165,13 @@ function autoMove() {
     if (autoMovingUp) {
       var new_value = currentR + 5;
       slider.value = new_value / 1000.0;
-      if (new_value == 990) {
+      if (new_value >= 990) {
         autoMovingUp = false;
       }
     } else {
       var new_value = currentR - 5;
       slider.value = new_value / 1000.0;
-      if (new_value == 10) {
+      if (new_value <= 10) {
         autoMovingUp = true;
       }
     }
