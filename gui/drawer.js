@@ -250,14 +250,29 @@ function drawSquaresPaving() {
         {x: x + (sideLength * width), y: y},
         {x: x + (sideLength * width), y: y + (sideLength * height)},
         {x: x, y: y + (sideLength * height)}]);
+
+      // squares.push([{x: x + (sideLength * width), y: y},
+      //   {x: x + (sideLength * width), y: y + (sideLength * height)},
+      //   {x: x + 2 * (sideLength * width), y: y + (sideLength * height)},
+      //   {x: x + 2 * (sideLength * width), y: y}]);
       squares.push([{x: x + (sideLength * width), y: y},
-        {x: x + (sideLength * width), y: y + (sideLength * height)},
+        {x: x + 2 * (sideLength * width), y: y},
         {x: x + 2 * (sideLength * width), y: y + (sideLength * height)},
-        {x: x + 2 * (sideLength * width), y: y}]);
+        {x: x + (sideLength * width), y: y + (sideLength * height)}]);
+
+      // squares.push([{x: x + (sideLength * width), y: y + (sideLength * height)},
+      //   {x: x, y: y + (sideLength * height)},
+      //   {x: x, y: y + 2 * (sideLength * height)},
+      //   {x: x + (sideLength * width), y: y + 2 * (sideLength * height)}]);
       squares.push([{x: x + (sideLength * width), y: y + (sideLength * height)},
-        {x: x, y: y + (sideLength * height)},
+        {x: x + (sideLength * width), y: y + 2 * (sideLength * height)},
         {x: x, y: y + 2 * (sideLength * height)},
-        {x: x + (sideLength * width), y: y + 2 * (sideLength * height)}]);
+        {x: x, y: y + (sideLength * height)}]);
+
+      // squares.push([{x: x + (sideLength * width), y: y + (sideLength * height)},
+      //   {x: x + (sideLength * width), y: y + 2 * (sideLength * height)},
+      //   {x: x + 2 * (sideLength * width), y: y + 2 * (sideLength * height)},
+      //   {x: x + 2 * (sideLength * width), y: y + (sideLength * height)}]);
       squares.push([{x: x + (sideLength * width), y: y + (sideLength * height)},
         {x: x + 2 * (sideLength * width), y: y + (sideLength * height)},
         {x: x + 2 * (sideLength * width), y: y + 2 * (sideLength * height)},
@@ -277,13 +292,6 @@ function drawDiamondsPaving() {
     // Once the side
     for (var x = 0; x < width + (sideLength * width); x += 3 * sideLength * width) {
 
-      // diamonds.push([{x: x, y: y},
-      //   {x: x + (sideLength * width), y: y},
-      //   {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
-      //   {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
-      //   {x: x, y: y + (Math.sqrt(3) * sideLength * height)},
-      //   {x: x - ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
-
       diamonds.push([{x: x, y: y},
         {x: x + (sideLength * width), y: y},
         {x: x + ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
@@ -299,13 +307,6 @@ function drawDiamondsPaving() {
         {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
         {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
 
-      // diamonds.push([{x: x + (sideLength * width), y: y},
-      //   {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
-      //   {x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
-      //   {x: x + (3 * sideLength * width), y: y},
-      //   {x: x + ((5/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))},
-      //   {x: x + ((3/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))}]);
-
       diamonds.push([{x: x + (sideLength * width), y: y},
         {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
         {x: x + (2 * sideLength * width), y: y},
@@ -320,20 +321,6 @@ function drawDiamondsPaving() {
         {x: x + (3 * sideLength * width), y: y},
         {x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
         {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
-
-      // diamonds.push([{x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
-      //   {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
-      //   {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
-      //   {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
-      //   {x: x + ((5/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
-      //   {x: x + (3 * sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)}]);
-
-      // diamonds.push([{x: x, y: y + (Math.sqrt(3) * sideLength * height)},
-      //   {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
-      //   {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
-      //   {x: x + (sideLength * width), y: y + (2 * Math.sqrt(3) * sideLength * height)},
-      //   {x: x, y: y + (2 * Math.sqrt(3) * sideLength * height)},
-      //   {x: x - ((1/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))}]);
     }
   }
   clearCanvas();
