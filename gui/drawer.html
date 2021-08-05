@@ -20,7 +20,7 @@
 		<p>This project aims at drawing nice pictures with nested polygons forming cool spirals. Nothing more, nothing less.</p>
 	</div>
   <div class="drawer">
-    <canvas id="the-canvas" width="1024" height="768"></canvas>
+    <canvas id="the-canvas" width="800" height="800"></canvas>
     <div class="sidebar">
       <p class="sidebar-title">Options</p>
 			<hr>
@@ -42,8 +42,11 @@
 			<hr>
 			<p class="sidebar-subtitle">Regular polygon pavings</p>
 			<div class="options-entry">
- 				Triangles
- 			</div>
+				<button class="button" id="triangles-paving-button" onclick="drawTrianglesPaving();">Triangles</button>
+ 				<div class="paving-range-label">Side length</div>
+			  <input type="range" id="triangles-length-range" name="triangles-length-range" min="0.2" max="1"
+						   value="0.5" step="0.02" class="slider">
+			</div>
 			<div class="options-entry">
  				Squares
  			</div>

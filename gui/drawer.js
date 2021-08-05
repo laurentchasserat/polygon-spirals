@@ -22,9 +22,10 @@ var poly1 = normalizedToRealPolygon(
 var poly2 = normalizedToRealPolygon(
   [{x: 0.5, y: 0.001}, {x: 0.5, y: 0.666},
    {x: 0.6875, y: 0.833}, {x: 0.9375, y: 0.05}]);
-var deltaplaneuh = normalizedToRealPolygon(
-  [{x: 0.125, y: 0.966}, {x: 0.6875, y: 0.833},
-   {x: 0.9375, y: 0.05}, {x: 0.999, y: 0.999}]);
+var tri1 = normalizedToRealPolygon(
+  [{x: 0.125, y: 0.966}, {x: 0.6875, y: 0.833}, {x: 0.999, y: 0.999}]);
+var tri2 = normalizedToRealPolygon(
+  [{x: 0.6875, y: 0.833}, {x: 0.9375, y: 0.05}, {x: 0.999, y: 0.999}]);
 
 var crossedPolygon = normalizedToRealPolygon(
   [{x: 0.5, y: 0.033}, {x: 0.6875, y: 0.833},
@@ -45,7 +46,7 @@ var losangeuh = normalizedToRealPolygon(
   [{x: 0.5, y: 0.001}, {x: 0.001, y: 0.5},
    {x: 0.5, y: 0.999}, {x: 0.999, y: 0.5}]);
 
-var preset1 = [deltaplaneuh, poly1, poly2, smallSquare];
+var preset1 = [tri1, tri2, poly1, poly2, smallSquare];
 var preset2 = [fullSizePoly, losangeuh];
 var preset3 = [crossedPolygon, crossedPolygon2, triangleuh];
 
@@ -56,6 +57,9 @@ var polygons = preset1;
 // Checkboxes
 var alternateColorsCheckbox = document.getElementById("alternate-colors");
 var autoMoveCheckbox = document.getElementById("auto-move");
+
+var slider = document.getElementById("ratio");
+var sliderTriangles = document.getElementById("triangles-length-range");
 
 function normalizedToRealPolygon (normalizedPoly) {
   result = [];
@@ -179,12 +183,42 @@ function downloadInformation() {
 }
 
 function clearCanvas() {
-  drawPolygon(fullSizePoly, fillcolor="#fff", noStroke=true)
+  drawPolygon(fullSizePoly, fillcolor="#fff", noStroke=true);
 }
 
 function applyPreset(preset) {
   clearCanvas();
   polygons = preset;
+  drawEverything();
+}
+
+function drawTrianglesPaving() {
+  sideLength = sliderTriangles.value;
+  triangles = [];
+  // Loop through twice the height of a triangle
+  for (var y = 0; y < height; y += (Math.sqrt(3) * (sideLength * height))) {
+    // Once the side
+    for (var x = 0; x < width + (sideLength * width); x += (sideLength * width)) {
+      // Draw upwards triangle with top at (x, y)
+      triangles.push([{x: x, y: y},
+        {x: x + ((sideLength * width) / 2), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x - ((sideLength * width) / 2), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+      // Downwards triangle with bottom at (x; y+2h)
+      triangles.push([{x: x, y: y + (Math.sqrt(3) * (sideLength * height))},
+        {x: x + ((sideLength * width) / 2), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x - ((sideLength * width) / 2), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+      // Downwards triangle right of first one
+      triangles.push([{x: x, y: y},
+        {x: x + ((sideLength * width) / 2), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (sideLength * height), y: y}]);
+      // Upwards triangles right of second one
+      triangles.push([{x: x, y: y + (Math.sqrt(3) * (sideLength * height))},
+        {x: x + ((sideLength * width) / 2), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (sideLength * height), y: y + (Math.sqrt(3) * (sideLength * height))}]);
+    }
+  }
+  clearCanvas();
+  polygons = triangles;
   drawEverything();
 }
 
@@ -217,11 +251,13 @@ function autoMove() {
   }
 }
 
-var slider = document.getElementById("ratio");
-
 // Update the current slider value (each time you drag the slider handle)
 slider.oninput = function() {
   onRUpdate();
+}
+
+sliderTriangles.oninput = function() {
+  drawTrianglesPaving();
 }
 
 alternateColorsCheckbox.oninput = function() {
