@@ -75,6 +75,7 @@ var autoMoveCheckbox = document.getElementById("auto-move");
 var slider = document.getElementById("ratio");
 var sliderTriangles = document.getElementById("triangles-length-range");
 var sliderSquares = document.getElementById("squares-length-range");
+var sliderDiamonds = document.getElementById("diamonds-length-range");
 var sliderHoneycomb = document.getElementById("honeycomb-length-range");
 
 function normalizedToRealPolygon (normalizedPoly) {
@@ -268,11 +269,83 @@ function drawSquaresPaving() {
   drawEverything();
 }
 
+function drawDiamondsPaving() {
+  sideLength = sliderDiamonds.value;
+  diamonds = [];
+  // Loop through twice the height of a triangle
+  for (var y = 0; y < 2 * height; y += Math.sqrt(3) * sideLength * height) {
+    // Once the side
+    for (var x = 0; x < width + (sideLength * width); x += 3 * sideLength * width) {
+
+      // diamonds.push([{x: x, y: y},
+      //   {x: x + (sideLength * width), y: y},
+      //   {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+      //   {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+      //   {x: x, y: y + (Math.sqrt(3) * sideLength * height)},
+      //   {x: x - ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      diamonds.push([{x: x, y: y},
+        {x: x + (sideLength * width), y: y},
+        {x: x + ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x - ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      diamonds.push([{x: x - ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+        {x: x, y: y + (Math.sqrt(3) * sideLength * height)}]);
+
+      diamonds.push([{x: x + (sideLength * width), y: y},
+        {x: x + ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+        {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      // diamonds.push([{x: x + (sideLength * width), y: y},
+      //   {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+      //   {x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+      //   {x: x + (3 * sideLength * width), y: y},
+      //   {x: x + ((5/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))},
+      //   {x: x + ((3/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      diamonds.push([{x: x + (sideLength * width), y: y},
+        {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (2 * sideLength * width), y: y},
+        {x: x + ((3/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      diamonds.push([{x: x + ((3/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + ((5/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (3 * sideLength * width), y: y},
+        {x: x + (2 * sideLength * width), y: y}]);
+
+      diamonds.push([{x: x + (2 * sideLength * width), y: y},
+        {x: x + (3 * sideLength * width), y: y},
+        {x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      // diamonds.push([{x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+      //   {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+      //   {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+      //   {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
+      //   {x: x + ((5/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
+      //   {x: x + (3 * sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)}]);
+
+      // diamonds.push([{x: x, y: y + (Math.sqrt(3) * sideLength * height)},
+      //   {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+      //   {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
+      //   {x: x + (sideLength * width), y: y + (2 * Math.sqrt(3) * sideLength * height)},
+      //   {x: x, y: y + (2 * Math.sqrt(3) * sideLength * height)},
+      //   {x: x - ((1/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))}]);
+    }
+  }
+  clearCanvas();
+  polygons = diamonds;
+  drawEverything();
+}
+
 function drawHoneycombPaving() {
   sideLength = sliderHoneycomb.value;
   hexagons = [];
   // Loop through twice the height of a triangle
-  for (var y = 0; y < 2 * height; y += 2 * Math.sqrt(3) * sideLength * height) {
+  for (var y = 0; y < (3/2) * height; y += Math.sqrt(3) * sideLength * height) {
     // Once the side
     for (var x = 0; x < width + (sideLength * width); x += 3 * sideLength * width) {
       hexagons.push([{x: x, y: y},
@@ -288,20 +361,6 @@ function drawHoneycombPaving() {
         {x: x + (3 * sideLength * width), y: y},
         {x: x + ((5/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))},
         {x: x + ((3/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))}]);
-
-      hexagons.push([{x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
-        {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
-        {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
-        {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
-        {x: x + ((5/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
-        {x: x + (3 * sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)}]);
-
-      hexagons.push([{x: x, y: y + (Math.sqrt(3) * sideLength * height)},
-        {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
-        {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
-        {x: x + (sideLength * width), y: y + (2 * Math.sqrt(3) * sideLength * height)},
-        {x: x, y: y + (2 * Math.sqrt(3) * sideLength * height)},
-        {x: x - ((1/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))}]);
     }
   }
   clearCanvas();
@@ -349,6 +408,10 @@ sliderTriangles.oninput = function() {
 
 sliderSquares.oninput = function() {
   drawSquaresPaving();
+}
+
+sliderDiamonds.oninput = function() {
+  drawDiamondsPaving();
 }
 
 sliderHoneycomb.oninput = function() {
