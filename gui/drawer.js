@@ -23,7 +23,7 @@ var poly2 = normalizedToRealPolygon(
   [{x: 0.5, y: 0.001}, {x: 0.5, y: 0.666},
    {x: 0.6875, y: 0.833}, {x: 0.9375, y: 0.05}]);
 var tri1 = normalizedToRealPolygon(
-  [{x: 0.125, y: 0.966}, {x: 0.6875, y: 0.833}, {x: 0.999, y: 0.999}]);
+  [{x: 0.6875, y: 0.833}, {x: 0.125, y: 0.966}, {x: 0.999, y: 0.999}]);
 var tri2 = normalizedToRealPolygon(
   [{x: 0.6875, y: 0.833}, {x: 0.9375, y: 0.05}, {x: 0.999, y: 0.999}]);
 
@@ -46,9 +46,23 @@ var losangeuh = normalizedToRealPolygon(
   [{x: 0.5, y: 0.001}, {x: 0.001, y: 0.5},
    {x: 0.5, y: 0.999}, {x: 0.999, y: 0.5}]);
 
+var hexagon = normalizedToRealPolygon(
+ [{x: 0.25, y: 0.001}, {x: 0.75, y: 0.001},
+  {x: 0.999, y: 0.5}, {x: 0.75, y: 0.999},
+  {x: 0.25, y: 0.999}, {x: 0.001, y: 0.5}]);
+var tria1 = normalizedToRealPolygon(
+ [{x: 0.001, y: 0.001}, {x: 0.001, y: 0.5}, {x: 0.25, y: 0.001}]);
+var tria2 = normalizedToRealPolygon(
+ [{x: 0.75, y: 0.001}, {x: 0.999, y: 0.5}, {x: 0.999, y: 0.001}]);
+var tria3 = normalizedToRealPolygon(
+ [{x: 0.999, y: 0.5}, {x: 0.75, y: 0.999}, {x: 0.999, y: 0.999}]);
+var tria4 = normalizedToRealPolygon(
+ [{x: 0.25, y: 0.999}, {x: 0.001, y: 0.5}, {x: 0.001, y: 0.999}]);
+
 var preset1 = [tri1, tri2, poly1, poly2, smallSquare];
 var preset2 = [fullSizePoly, losangeuh];
 var preset3 = [crossedPolygon, crossedPolygon2, triangleuh];
+var preset4 = [hexagon, tria1, tria2, tria3, tria4];
 
 var r = 0.15;
 var depth = 500;
@@ -61,6 +75,7 @@ var autoMoveCheckbox = document.getElementById("auto-move");
 var slider = document.getElementById("ratio");
 var sliderTriangles = document.getElementById("triangles-length-range");
 var sliderSquares = document.getElementById("squares-length-range");
+var sliderHoneycomb = document.getElementById("honeycomb-length-range");
 
 function normalizedToRealPolygon (normalizedPoly) {
   result = [];
@@ -197,9 +212,9 @@ function drawTrianglesPaving() {
   sideLength = sliderTriangles.value;
   triangles = [];
   // Loop through twice the height of a triangle
-  for (var y = 0; y < height; y += (Math.sqrt(3) * (sideLength * height))) {
+  for (var y = 0; y < height; y += Math.sqrt(3) * sideLength * height) {
     // Once the side
-    for (var x = 0; x < width + (sideLength * width); x += (sideLength * width)) {
+    for (var x = 0; x < width + (sideLength * width); x += sideLength * width) {
       // Draw upwards triangle with top at (x, y)
       triangles.push([{x: x, y: y},
         {x: x + ((sideLength * width) / 2), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
@@ -227,9 +242,9 @@ function drawSquaresPaving() {
   sideLength = sliderSquares.value;
   squares = [];
   // Loop through twice the height of a triangle
-  for (var y = 0; y < height; y += 2 * (sideLength * height)) {
+  for (var y = 0; y < height; y += 2 * sideLength * height) {
     // Once the side
-    for (var x = 0; x < width + (sideLength * width); x += 2 * (sideLength * height)) {
+    for (var x = 0; x < width + (sideLength * width); x += 2 * sideLength * height) {
       squares.push([{x: x, y: y},
         {x: x + (sideLength * width), y: y},
         {x: x + (sideLength * width), y: y + (sideLength * height)},
@@ -250,6 +265,47 @@ function drawSquaresPaving() {
   }
   clearCanvas();
   polygons = squares;
+  drawEverything();
+}
+
+function drawHoneycombPaving() {
+  sideLength = sliderHoneycomb.value;
+  hexagons = [];
+  // Loop through twice the height of a triangle
+  for (var y = 0; y < 2 * height; y += 2 * Math.sqrt(3) * sideLength * height) {
+    // Once the side
+    for (var x = 0; x < width + (sideLength * width); x += 3 * sideLength * width) {
+      hexagons.push([{x: x, y: y},
+        {x: x + (sideLength * width), y: y},
+        {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+        {x: x, y: y + (Math.sqrt(3) * sideLength * height)},
+        {x: x - ((1/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      hexagons.push([{x: x + (sideLength * width), y: y},
+        {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (3 * sideLength * width), y: y},
+        {x: x + ((5/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + ((3/2) * sideLength * width), y: y - ((Math.sqrt(3) / 2) * (sideLength * height))}]);
+
+      hexagons.push([{x: x + ((5/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + ((3/2) * sideLength * width), y: y + ((Math.sqrt(3) / 2) * (sideLength * height))},
+        {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+        {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
+        {x: x + ((5/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
+        {x: x + (3 * sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)}]);
+
+      hexagons.push([{x: x, y: y + (Math.sqrt(3) * sideLength * height)},
+        {x: x + (sideLength * width), y: y + (Math.sqrt(3) * sideLength * height)},
+        {x: x + ((3/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))},
+        {x: x + (sideLength * width), y: y + (2 * Math.sqrt(3) * sideLength * height)},
+        {x: x, y: y + (2 * Math.sqrt(3) * sideLength * height)},
+        {x: x - ((1/2) * sideLength * width), y: y + (((Math.sqrt(3) * 3) / 2) * (sideLength * height))}]);
+    }
+  }
+  clearCanvas();
+  polygons = hexagons;
   drawEverything();
 }
 
@@ -293,6 +349,10 @@ sliderTriangles.oninput = function() {
 
 sliderSquares.oninput = function() {
   drawSquaresPaving();
+}
+
+sliderHoneycomb.oninput = function() {
+  drawHoneycombPaving();
 }
 
 alternateColorsCheckbox.oninput = function() {

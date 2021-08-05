@@ -57,8 +57,11 @@
  				Losanges
  			</div>
 			<div class="options-entry">
- 				Honeycomb
- 			</div>
+				<button class="button" id="honeycomb-paving-button" onclick="drawHoneycombPaving();">Hexagons</button>
+ 				<div class="paving-range-label">Side length</div>
+			  <input type="range" id="honeycomb-length-range" name="honeycomb-length-range" min="0.2" max="1"
+						   value="0.5" step="0.02" class="slider">
+			</div>
 			<hr>
 			<p class="sidebar-subtitle">Irregular polygon layouts</p>
 			<div class="options-entry">
@@ -68,6 +71,7 @@
 				<button class="button" id="preset1-button" onclick="applyPreset(preset1);">Preset 1</button>
 				<button class="button" id="preset2-button" onclick="applyPreset(preset2);">Preset 2</button>
 				<button class="button" id="preset3-button" onclick="applyPreset(preset3);">Preset 3</button>
+				<button class="button" id="preset4-button" onclick="applyPreset(preset4);">Preset 4</button>
 			</div>
 			<div class="options-entry">
  				<b>Create your own custom layout!</b>
