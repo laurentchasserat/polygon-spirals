@@ -60,6 +60,7 @@ var autoMoveCheckbox = document.getElementById("auto-move");
 
 var slider = document.getElementById("ratio");
 var sliderTriangles = document.getElementById("triangles-length-range");
+var sliderSquares = document.getElementById("squares-length-range");
 
 function normalizedToRealPolygon (normalizedPoly) {
   result = [];
@@ -222,6 +223,36 @@ function drawTrianglesPaving() {
   drawEverything();
 }
 
+function drawSquaresPaving() {
+  sideLength = sliderSquares.value;
+  squares = [];
+  // Loop through twice the height of a triangle
+  for (var y = 0; y < height; y += 2 * (sideLength * height)) {
+    // Once the side
+    for (var x = 0; x < width + (sideLength * width); x += 2 * (sideLength * height)) {
+      squares.push([{x: x, y: y},
+        {x: x + (sideLength * width), y: y},
+        {x: x + (sideLength * width), y: y + (sideLength * height)},
+        {x: x, y: y + (sideLength * height)}]);
+      squares.push([{x: x + (sideLength * width), y: y},
+        {x: x + (sideLength * width), y: y + (sideLength * height)},
+        {x: x + 2 * (sideLength * width), y: y + (sideLength * height)},
+        {x: x + 2 * (sideLength * width), y: y}]);
+      squares.push([{x: x + (sideLength * width), y: y + (sideLength * height)},
+        {x: x, y: y + (sideLength * height)},
+        {x: x, y: y + 2 * (sideLength * height)},
+        {x: x + (sideLength * width), y: y + 2 * (sideLength * height)}]);
+      squares.push([{x: x + (sideLength * width), y: y + (sideLength * height)},
+        {x: x + 2 * (sideLength * width), y: y + (sideLength * height)},
+        {x: x + 2 * (sideLength * width), y: y + 2 * (sideLength * height)},
+        {x: x + (sideLength * width), y: y + 2 * (sideLength * height)}]);
+    }
+  }
+  clearCanvas();
+  polygons = squares;
+  drawEverything();
+}
+
 function onRUpdate() {
   clearCanvas();
   r = slider.value;
@@ -258,6 +289,10 @@ slider.oninput = function() {
 
 sliderTriangles.oninput = function() {
   drawTrianglesPaving();
+}
+
+sliderSquares.oninput = function() {
+  drawSquaresPaving();
 }
 
 alternateColorsCheckbox.oninput = function() {
