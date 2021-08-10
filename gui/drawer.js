@@ -176,28 +176,80 @@ function drawEverything() {
 var editionPointNumber = 0;
 var customPoints = [];
 var customArcs = [];
-var pointWidth = 10;
-var pointHeight = 10;
-canvas.addEventListener('click', function(event) {
-    if (editionCheckbox.checked) {
+var pointWidth = 12;
+var pointHeight = 12;
+
+var xMouseDown = 0;
+var yMouseDown = 0;
+canvas.addEventListener('mousedown', function(event) {
+  if (editionCheckbox.checked) {
+    xMouseDown = event.x - (canvas.offsetLeft + canvas.clientLeft);
+    // Substract the distance scrolled down !
+    yMouseDown = event.y - (canvas.offsetTop + canvas.clientTop - window.scrollY);
+  }
+});
+
+canvas.addEventListener('mouseup', function(event) {
+  if (editionCheckbox.checked) {
     var x = event.x - (canvas.offsetLeft + canvas.clientLeft);
     // Substract the distance scrolled down !
     var y = event.y - (canvas.offsetTop + canvas.clientTop - window.scrollY);
-    console.log("Click detected at (" + x + ", " + y + ")!");
 
-    // If clicked point is already in list, remove it
-    var removed = false;
-    for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
-      if (x >= customPoints[ptIndex].x && x <= customPoints[ptIndex].x + pointWidth && y >= customPoints[ptIndex].y && y <= customPoints[ptIndex].y + pointHeight) {
-        customPoints.splice(ptIndex, 1);
-        removed = true;
+    if (x == xMouseDown && y == yMouseDown) {
+      // Click detected
+      // console.log("Click detected at (" + x + ", " + y + ")!");
+
+      // If clicked point is already in list, remove it
+      var removed = false;
+      var removedId = -1;
+      var newPoints = []
+      for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+        if (x >= customPoints[ptIndex].x - (pointWidth / 2) && x <= customPoints[ptIndex].x + (pointWidth / 2) && y >= customPoints[ptIndex].y - (pointHeight / 2) && y <= customPoints[ptIndex].y + (pointHeight / 2)) {
+          removed = true;
+          removedId = customPoints[ptIndex].id;
+        } else {
+          newPoints.push(customPoints[ptIndex]);
+        }
       }
-    }
+      customPoints = newPoints;
 
-    // Add point to list if the click wasn't a removal
-    if (!removed) {
-      customPoints.push({id: editionPointNumber, x: x, y: y});
-      editionPointNumber++;
+      if (!removed) {
+        // Add point to list if the click wasn't a removal
+        customPoints.push({id: editionPointNumber, x: x, y: y});
+        editionPointNumber++;
+      } else {
+        // Else delete related arcs
+        newArcs = []
+        for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
+          if (customArcs[arcIndex][0] != removedId && customArcs[arcIndex][1] != removedId) {
+            newArcs.push(customArcs[arcIndex]);
+          }
+        }
+        customArcs = newArcs;
+      }
+    } else {
+      // Drag and drop detected
+      // console.log("DnD detected at (" + x + ", " + y + ")!");
+
+      // See if DnD defines an arc
+      var startId = null;
+      var stopId = null;
+      for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+        if (xMouseDown >= customPoints[ptIndex].x - (pointWidth / 2) && xMouseDown <= customPoints[ptIndex].x + (pointWidth / 2) && yMouseDown >= customPoints[ptIndex].y - (pointHeight / 2) && yMouseDown <= customPoints[ptIndex].y + (pointHeight / 2)) {
+          startId = customPoints[ptIndex].id;
+        }
+      }
+      for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+        if (x >= customPoints[ptIndex].x - (pointWidth / 2) && x <= customPoints[ptIndex].x + (pointWidth / 2) && y >= customPoints[ptIndex].y - (pointHeight / 2) && y <= customPoints[ptIndex].y + (pointHeight / 2)) {
+          stopId = customPoints[ptIndex].id;
+        }
+      }
+
+      // Add arc to list
+      if (startId != null && stopId != null && startId != stopId) {
+        console.log('Arc detected from point ' + startId + ' to ' + stopId);
+        customArcs.push([startId, stopId]);
+      }
     }
 
     clearCanvas();
@@ -205,19 +257,40 @@ canvas.addEventListener('click', function(event) {
   }
 });
 
+function clearEdition() {
+  customPoints = [];
+  customArcs = [];
+  clearCanvas();
+}
+
+function findPointForId(id) {
+  point = null;
+  for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+    if (id == customPoints[ptIndex].id) {
+      point = customPoints[ptIndex]
+    }
+  }
+  return point;
+}
+
 
 // This method is in charge of drawing the elements related to the custom layout edition mode
 function drawEditionElements() {
   if (editionCheckbox.checked) {
-    console.log('Drawing edition elements!');
-    console.log('Current customPoints:');
-    console.log(customPoints);
-    console.log('Current customArcs:');
-    console.log(customArcs);
-
+    // Draw points
     for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
       ctx.fillStyle = "#f00";
       ctx.fillRect(customPoints[ptIndex].x - (pointWidth / 2), customPoints[ptIndex].y - (pointHeight / 2), pointWidth, pointHeight);
+    }
+    // Draw arcs
+    for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
+      point1 = findPointForId(customArcs[arcIndex][0]);
+      point2 = findPointForId(customArcs[arcIndex][1]);
+      ctx.strokeStyle = "#0f0";
+      ctx.beginPath();
+      ctx.moveTo(point1.x,point1.y);
+      ctx.lineTo(point2.x, point2.y);
+      ctx.stroke();
     }
   }
 }
