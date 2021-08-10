@@ -295,9 +295,105 @@ function drawEditionElements() {
   }
 }
 
+function buildSpanningTree(current, father, explored, depth) {
+  // Find neighbors
+  var neighbors = []
+  for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
+    if (current == customArcs[arcIndex][0]) {
+      neighbors.push(customArcs[arcIndex][1]);
+    } else if (current == customArcs[arcIndex][1]) {
+      neighbors.push(customArcs[arcIndex][0]);
+    }
+  }
+
+  // Keep only neighbors that were not explored
+  var newNeighbors = []
+  for (var nbId = 0; nbId < neighbors.length; nbId++) {
+    var wasExplored = false;
+    for (var xpldId = 0; xpldId < explored.length; xpldId++) {
+      if (neighbors[nbId] == explored[xpldId]) {
+        wasExplored = true;
+      }
+    }
+    if (!wasExplored) {
+      newNeighbors.push(neighbors[nbId]);
+    }
+  }
+
+  if (newNeighbors.length == 0) {
+    // Trivial case: all neighbors were explored or no neighbors
+    return {pt: current, father: father, sons: []};
+  } else {
+    var sons = [];
+    var newExplored = [];
+    for (var k = 0; k < explored.length; k++) {
+      newExplored.push(explored[k]);
+    }
+    newExplored.push(current);
+    for (var nbr = 0; nbr < newNeighbors.length; nbr++) {
+      sons.push(buildSpanningTree(newNeighbors[nbr], current, newExplored, depth+1));
+    }
+    return {pt: current, father: father, sons: sons};
+  }
+}
+
+var allIdentifiedPolygons = [];
+function identifyPolygons(tree, entryPoint=-1, pointList=[]) {
+  if (tree.father == -1) {
+    // Tree base, set entry point
+    for (var i = 0; i < tree.sons.length; i++) {
+      identifyPolygons(tree.sons[i], tree.pt, [tree.pt]);
+    }
+  } else {
+    // Compute new point list
+    var newPointList = []
+    for (var i = 0; i < pointList.length; i++) {
+      newPointList.push(pointList[i])
+    }
+    newPointList.push(tree.pt)
+
+    // Add possible polys to identified ones
+    if (newPointList.length >= 3) {
+      // Find neighbors
+      var neighbors = []
+      for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
+        if (tree.pt == customArcs[arcIndex][0]) {
+          neighbors.push(customArcs[arcIndex][1]);
+        } else if (tree.pt == customArcs[arcIndex][1]) {
+          neighbors.push(customArcs[arcIndex][0]);
+        }
+      }
+      // Add poly if entry point in neighbors
+      for (var n = 0; n < neighbors.length; n++) {
+        if (neighbors[n] == entryPoint) {
+          allIdentifiedPolygons.push(newPointList);
+        }
+      }
+    }
+
+    for (var i = 0; i < tree.sons.length; i++) {
+      identifyPolygons(tree.sons[i], entryPoint, newPointList);
+    }
+  }
+}
+
 // This method is in charge of extracting polygons from the custom layout edition mode, apply them and trigger the drawing with drawEverything().
 function drawCustomLayout() {
   editionCheckbox.checked = false;
+  allIdentifiedPolygons = [];
+  console.log(customPoints);
+  console.log(customArcs);
+
+
+  // For all points
+  for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+      tree = buildSpanningTree(customPoints[ptIndex].id, -1, [], 0);
+      console.log('------');
+      console.log(tree);
+      identifyPolygons(tree);
+      console.log('All identified polygons')
+      console.log(allIdentifiedPolygons);
+  }
 
   clearCanvas();
   polygons = [];
