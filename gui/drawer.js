@@ -176,6 +176,8 @@ function drawEverything() {
 var editionPointNumber = 0;
 var customPoints = [];
 var customArcs = [];
+var pointWidth = 10;
+var pointHeight = 10;
 canvas.addEventListener('click', function(event) {
     if (editionCheckbox.checked) {
     var x = event.x - (canvas.offsetLeft + canvas.clientLeft);
@@ -183,8 +185,20 @@ canvas.addEventListener('click', function(event) {
     var y = event.y - (canvas.offsetTop + canvas.clientTop - window.scrollY);
     console.log("Click detected at (" + x + ", " + y + ")!");
 
-    customPoints.push({id: editionPointNumber, x: x, y: y});
-    editionPointNumber++;
+    // If clicked point is already in list, remove it
+    var removed = false;
+    for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+      if (x >= customPoints[ptIndex].x && x <= customPoints[ptIndex].x + pointWidth && y >= customPoints[ptIndex].y && y <= customPoints[ptIndex].y + pointHeight) {
+        customPoints.splice(ptIndex, 1);
+        removed = true;
+      }
+    }
+
+    // Add point to list if the click wasn't a removal
+    if (!removed) {
+      customPoints.push({id: editionPointNumber, x: x, y: y});
+      editionPointNumber++;
+    }
 
     clearCanvas();
     drawEditionElements();
@@ -201,6 +215,10 @@ function drawEditionElements() {
     console.log('Current customArcs:');
     console.log(customArcs);
 
+    for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+      ctx.fillStyle = "#f00";
+      ctx.fillRect(customPoints[ptIndex].x - (pointWidth / 2), customPoints[ptIndex].y - (pointHeight / 2), pointWidth, pointHeight);
+    }
   }
 }
 
