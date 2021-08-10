@@ -71,6 +71,7 @@ var polygons = preset1;
 // Checkboxes
 var alternateColorsCheckbox = document.getElementById("alternate-colors");
 var autoMoveCheckbox = document.getElementById("auto-move");
+var editionCheckbox = document.getElementById("edition");
 
 var slider = document.getElementById("ratio");
 var sliderTriangles = document.getElementById("triangles-length-range");
@@ -160,6 +161,7 @@ function drawPolygonSpiralAltFill(ratio, depth, polygonCoordinates, fill="#fff")
 }
 
 function drawEverything() {
+  editionCheckbox.checked = false;
   for (var i = 0; i < polygons.length; i++) {
     if (alternateColorsCheckbox.checked) {
       drawPolygonSpiralAltFill(ratio=r, depth=depth,
@@ -168,6 +170,47 @@ function drawEverything() {
       drawPolygonSpiral(ratio=r, depth=depth, polygonCoordinates=polygons[i]);
     }
   }
+}
+
+// To process click events
+var editionPointNumber = 0;
+var customPoints = [];
+var customArcs = [];
+canvas.addEventListener('click', function(event) {
+    if (editionCheckbox.checked) {
+    var x = event.x - (canvas.offsetLeft + canvas.clientLeft);
+    // Substract the distance scrolled down !
+    var y = event.y - (canvas.offsetTop + canvas.clientTop - window.scrollY);
+    console.log("Click detected at (" + x + ", " + y + ")!");
+
+    customPoints.push({id: editionPointNumber, x: x, y: y});
+    editionPointNumber++;
+
+    clearCanvas();
+    drawEditionElements();
+  }
+});
+
+
+// This method is in charge of drawing the elements related to the custom layout edition mode
+function drawEditionElements() {
+  if (editionCheckbox.checked) {
+    console.log('Drawing edition elements!');
+    console.log('Current customPoints:');
+    console.log(customPoints);
+    console.log('Current customArcs:');
+    console.log(customArcs);
+
+  }
+}
+
+// This method is in charge of extracting polygons from the custom layout edition mode, apply them and trigger the drawing with drawEverything().
+function drawCustomLayout() {
+  editionCheckbox.checked = false;
+
+  clearCanvas();
+  polygons = [];
+  drawEverything();
 }
 
 function downloadCanvasAsPng() {
@@ -412,6 +455,11 @@ alternateColorsCheckbox.oninput = function() {
 
 autoMoveCheckbox.oninput = function() {
   autoMove();
+}
+
+editionCheckbox.oninput = function() {
+  clearCanvas();
+  drawEditionElements();
 }
 
 onRUpdate()

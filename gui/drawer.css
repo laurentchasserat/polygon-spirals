@@ -26,16 +26,16 @@ p {
 
 .drawer {
   margin: auto;
-  width: 1240px;
+  width: 1390px;
   padding: 20px;
-  height: 800px;
+  height: 900px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   background-color: white;
   margin-bottom: 100px;
 }
 
 .sidebar {
-  width: 400px;
+  width: 450px;
   float: left;
   padding: 0px 10px 0px 10px;
   margin-left: 20px;

@@ -20,7 +20,7 @@
 		<p>This project aims at drawing nice pictures with nested polygons forming cool spirals. Nothing more, nothing less.</p>
 	</div>
   <div class="drawer">
-    <canvas id="the-canvas" width="800" height="800"></canvas>
+    <canvas id="the-canvas" width="900" height="900"></canvas>
     <div class="sidebar">
       <p class="sidebar-title">Options</p>
 			<hr>
@@ -79,7 +79,16 @@
 			<div class="options-entry">
  				<b>Create your own custom layout!</b>
  			</div>
-			<i>Coming soon...</i>
+			<div class="options-entry">
+ 				<i>In edition mode, click on the canvas to place or remove a point, click and drag between two points to draw polygon segments, and finally click "Draw!" to trace spirals.</i>
+ 			</div>
+ 			<div class="options-entry">
+ 				<label for="edition">Enable edition mode</label>
+ 			  <input type="checkbox" id="edition" name="edition">
+ 			</div>
+			<div class="group-of-buttons">
+				<button class="button" id="draw-button" onclick="drawCustomLayout();">Draw!</button>
+			</div>
 			<hr>
 			<div class="group-of-buttons">
 			  <button class="button" id="download-button" onclick="downloadCanvasAsPng();">Download</button>
