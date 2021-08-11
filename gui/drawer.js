@@ -181,7 +181,9 @@ var pointHeight = 12;
 
 var xMouseDown = 0;
 var yMouseDown = 0;
+var clickHeldDown = false;
 canvas.addEventListener('mousedown', function(event) {
+  clickHeldDown = true;
   if (editionCheckbox.checked) {
     xMouseDown = event.x - (canvas.offsetLeft + canvas.clientLeft);
     // Substract the distance scrolled down !
@@ -190,6 +192,7 @@ canvas.addEventListener('mousedown', function(event) {
 });
 
 canvas.addEventListener('mouseup', function(event) {
+  clickHeldDown = false;
   if (editionCheckbox.checked) {
     var x = event.x - (canvas.offsetLeft + canvas.clientLeft);
     // Substract the distance scrolled down !
@@ -254,6 +257,35 @@ canvas.addEventListener('mouseup', function(event) {
 
     clearCanvas();
     drawEditionElements();
+  }
+});
+
+canvas.addEventListener('mousemove', function(event) {
+  if (clickHeldDown) {
+    if (editionCheckbox.checked) {
+      var x = event.x - (canvas.offsetLeft + canvas.clientLeft);
+      // Substract the distance scrolled down !
+      var y = event.y - (canvas.offsetTop + canvas.clientTop - window.scrollY);
+    }
+    if (x != xMouseDown || y != yMouseDown) {
+      var startId = null;
+      for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+        if (xMouseDown >= customPoints[ptIndex].x - (pointWidth / 2) && xMouseDown <= customPoints[ptIndex].x + (pointWidth / 2) && yMouseDown >= customPoints[ptIndex].y - (pointHeight / 2) && yMouseDown <= customPoints[ptIndex].y + (pointHeight / 2)) {
+          startId = customPoints[ptIndex].id;
+        }
+      }
+      if (startId != null) {
+        // Hold started on a point
+        clearCanvas();
+        drawEditionElements();
+        departure = findPointForId(startId);
+        ctx.strokeStyle = "#0f0";
+        ctx.beginPath();
+        ctx.moveTo(departure.x,departure.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+    }
   }
 });
 
