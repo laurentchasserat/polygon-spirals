@@ -189,8 +189,6 @@ canvas.addEventListener('mousedown', function(event) {
     xMouseDown = event.x - (canvas.offsetLeft + canvas.clientLeft);
     // Substract the distance scrolled down !
     yMouseDown = event.y - (canvas.offsetTop + canvas.clientTop - window.scrollY);
-
-
     // Check if coordinates are within a point
     var onPoint = false;
     var pointId = -1;
@@ -198,27 +196,6 @@ canvas.addEventListener('mousedown', function(event) {
       if (xMouseDown >= customPoints[ptIndex].x - (pointWidth / 2) && xMouseDown <= customPoints[ptIndex].x + (pointWidth / 2) && yMouseDown >= customPoints[ptIndex].y - (pointHeight / 2) && yMouseDown <= customPoints[ptIndex].y + (pointHeight / 2)) {
         onPoint = true;
         pointId = ptIndex;
-      }
-    }
-    // Start polygon in construction if so
-    if (onPoint) {
-      if (polygonInConstruction.length == 0) {
-        polygonInConstruction = [pointId];
-      } else {
-        if (pointId == polygonInConstruction[0]){
-          // Polygon finished
-        } else {
-          last = findPointForId(polygonInConstruction[polygonInConstruction.length - 1]);
-          xMouseDown = last.x;
-          yMouseDown = last.y;
-          polygonInConstruction.push[pointId];
-        }
-      }
-    } else {
-      if (polygonInConstruction.length > 0) {
-        last = findPointForId(polygonInConstruction[polygonInConstruction.length - 1]);
-        xMouseDown = last.x;
-        yMouseDown = last.y;
       }
     }
   }
@@ -235,31 +212,55 @@ canvas.addEventListener('mouseup', function(event) {
       // Click detected
       // console.log("Click detected at (" + x + ", " + y + ")!");
 
-      // Point definition occurs if no polygon is being built
-      if (polygonInConstruction.length == 0) {
+      // If clicked point is already in list, remove it
+      var removed = false;
+      var removedId = -1;
+      var newPoints = []
+      for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+        if (x >= customPoints[ptIndex].x - (pointWidth / 2) && x <= customPoints[ptIndex].x + (pointWidth / 2) && y >= customPoints[ptIndex].y - (pointHeight / 2) && y <= customPoints[ptIndex].y + (pointHeight / 2)) {
+          removed = true;
+          removedId = customPoints[ptIndex].id;
+        } else {
+          newPoints.push(customPoints[ptIndex]);
+        }
+      }
+      customPoints = newPoints;
 
-        // If clicked point is already in list, remove it
-        var removed = false;
-        var removedId = -1;
-        var newPoints = []
-        for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
-          if (x >= customPoints[ptIndex].x - (pointWidth / 2) && x <= customPoints[ptIndex].x + (pointWidth / 2) && y >= customPoints[ptIndex].y - (pointHeight / 2) && y <= customPoints[ptIndex].y + (pointHeight / 2)) {
-            removed = true;
-            removedId = customPoints[ptIndex].id;
-          } else {
-            newPoints.push(customPoints[ptIndex]);
+      // Else, define new point
+      if (!removed) {
+        // Add point to list if the click wasn't a removal
+        customPoints.push({id: editionPointNumber, x: x, y: y});
+        editionPointNumber++;
+      } else {
+        // Remove polygons
+        newPolys = []
+        for (var p = 0; p < customPolygons.length; p++) {
+          deletedPointWasInPoly = false;
+          for (var pt = 0; pt < customPolygons[p].length; pt++) {
+            if (customPolygons[p][pt] == removedId) {
+              deletedPointWasInPoly = true;
+            }
+          }
+          if (!deletedPointWasInPoly) {
+            newPolys.push(customPolygons[p]);
           }
         }
-        customPoints = newPoints;
+        customPolygons = newPolys;
 
-        // Else, define new point
-        if (!removed) {
-          // Add point to list if the click wasn't a removal
-          customPoints.push({id: editionPointNumber, x: x, y: y});
-          editionPointNumber++;
+        // Remove arcs from polygonInConstruction
+        newPolygonInConstruction = []
+        for (var a = 0; a < polygonInConstruction.length; a++) {
+          deletedPointWasInPoly = false;
+          for (var pt = 0; pt < polygonInConstruction[a].length; pt++) {
+            if (polygonInConstruction[a][pt] == removedId) {
+              deletedPointWasInPoly = true;
+            }
+          }
+          if (!deletedPointWasInPoly) {
+            newPolygonInConstruction.push(polygonInConstruction[a]);
+          }
         }
-      } else {
-
+        polygonInConstruction = newPolygonInConstruction;
       }
 
     } else {
@@ -279,15 +280,9 @@ canvas.addEventListener('mouseup', function(event) {
           stopId = customPoints[ptIndex].id;
         }
       }
-
       // Add arc to list and set new departure
       if (startId != null && stopId != null && startId != stopId) {
-        polygonInConstruction.push(stopId);
-        console.log('P in c');
-        console.log(polygonInConstruction);
-        departure = findPointForId(stopId);
-        xMouseDown = departure.x;
-        yMouseDown = departure.y;
+        polygonInConstruction.push([startId, stopId]);
       }
     }
 
@@ -350,11 +345,11 @@ function drawEditionElements() {
       ctx.fillStyle = "#f00";
       ctx.fillRect(customPoints[ptIndex].x - (pointWidth / 2), customPoints[ptIndex].y - (pointHeight / 2), pointWidth, pointHeight);
     }
-    // Draw arcs
-    if (2 <= polygonInConstruction.length) {
-      for (var i = 1; i < polygonInConstruction.length; i++) {
-        point1 = findPointForId(polygonInConstruction[i - 1]);
-        point2 = findPointForId(polygonInConstruction[i]);
+    // Draw lines
+    if (polygonInConstruction.length > 0) {
+      for (var i = 0; i < polygonInConstruction.length; i++) {
+        point1 = findPointForId(polygonInConstruction[i][0]);
+        point2 = findPointForId(polygonInConstruction[i][1]);
         ctx.strokeStyle = "#0f0";
         ctx.beginPath();
         ctx.moveTo(point1.x,point1.y);
