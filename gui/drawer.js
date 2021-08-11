@@ -175,7 +175,8 @@ function drawEverything() {
 // To process click events
 var editionPointNumber = 0;
 var customPoints = [];
-var customArcs = [];
+var customPolygons = [];
+var polygonInConstruction = [];
 var pointWidth = 12;
 var pointHeight = 12;
 
@@ -188,6 +189,38 @@ canvas.addEventListener('mousedown', function(event) {
     xMouseDown = event.x - (canvas.offsetLeft + canvas.clientLeft);
     // Substract the distance scrolled down !
     yMouseDown = event.y - (canvas.offsetTop + canvas.clientTop - window.scrollY);
+
+
+    // Check if coordinates are within a point
+    var onPoint = false;
+    var pointId = -1;
+    for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+      if (xMouseDown >= customPoints[ptIndex].x - (pointWidth / 2) && xMouseDown <= customPoints[ptIndex].x + (pointWidth / 2) && yMouseDown >= customPoints[ptIndex].y - (pointHeight / 2) && yMouseDown <= customPoints[ptIndex].y + (pointHeight / 2)) {
+        onPoint = true;
+        pointId = ptIndex;
+      }
+    }
+    // Start polygon in construction if so
+    if (onPoint) {
+      if (polygonInConstruction.length == 0) {
+        polygonInConstruction = [pointId];
+      } else {
+        if (pointId == polygonInConstruction[0]){
+          // Polygon finished
+        } else {
+          last = findPointForId(polygonInConstruction[polygonInConstruction.length - 1]);
+          xMouseDown = last.x;
+          yMouseDown = last.y;
+          polygonInConstruction.push[pointId];
+        }
+      }
+    } else {
+      if (polygonInConstruction.length > 0) {
+        last = findPointForId(polygonInConstruction[polygonInConstruction.length - 1]);
+        xMouseDown = last.x;
+        yMouseDown = last.y;
+      }
+    }
   }
 });
 
@@ -202,39 +235,38 @@ canvas.addEventListener('mouseup', function(event) {
       // Click detected
       // console.log("Click detected at (" + x + ", " + y + ")!");
 
-      // If clicked point is already in list, remove it
-      var removed = false;
-      var removedId = -1;
-      var newPoints = []
-      for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
-        if (x >= customPoints[ptIndex].x - (pointWidth / 2) && x <= customPoints[ptIndex].x + (pointWidth / 2) && y >= customPoints[ptIndex].y - (pointHeight / 2) && y <= customPoints[ptIndex].y + (pointHeight / 2)) {
-          removed = true;
-          removedId = customPoints[ptIndex].id;
-        } else {
-          newPoints.push(customPoints[ptIndex]);
-        }
-      }
-      customPoints = newPoints;
+      // Point definition occurs if no polygon is being built
+      if (polygonInConstruction.length == 0) {
 
-      if (!removed) {
-        // Add point to list if the click wasn't a removal
-        customPoints.push({id: editionPointNumber, x: x, y: y});
-        editionPointNumber++;
-      } else {
-        // Else delete related arcs
-        newArcs = []
-        for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
-          if (customArcs[arcIndex][0] != removedId && customArcs[arcIndex][1] != removedId) {
-            newArcs.push(customArcs[arcIndex]);
+        // If clicked point is already in list, remove it
+        var removed = false;
+        var removedId = -1;
+        var newPoints = []
+        for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+          if (x >= customPoints[ptIndex].x - (pointWidth / 2) && x <= customPoints[ptIndex].x + (pointWidth / 2) && y >= customPoints[ptIndex].y - (pointHeight / 2) && y <= customPoints[ptIndex].y + (pointHeight / 2)) {
+            removed = true;
+            removedId = customPoints[ptIndex].id;
+          } else {
+            newPoints.push(customPoints[ptIndex]);
           }
         }
-        customArcs = newArcs;
+        customPoints = newPoints;
+
+        // Else, define new point
+        if (!removed) {
+          // Add point to list if the click wasn't a removal
+          customPoints.push({id: editionPointNumber, x: x, y: y});
+          editionPointNumber++;
+        }
+      } else {
+
       }
+
     } else {
       // Drag and drop detected
       // console.log("DnD detected at (" + x + ", " + y + ")!");
 
-      // See if DnD defines an arc
+      // See if DnD was released on a point but not the start one
       var startId = null;
       var stopId = null;
       for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
@@ -248,10 +280,14 @@ canvas.addEventListener('mouseup', function(event) {
         }
       }
 
-      // Add arc to list
+      // Add arc to list and set new departure
       if (startId != null && stopId != null && startId != stopId) {
-        console.log('Arc detected from point ' + startId + ' to ' + stopId);
-        customArcs.push([startId, stopId]);
+        polygonInConstruction.push(stopId);
+        console.log('P in c');
+        console.log(polygonInConstruction);
+        departure = findPointForId(stopId);
+        xMouseDown = departure.x;
+        yMouseDown = departure.y;
       }
     }
 
@@ -291,7 +327,7 @@ canvas.addEventListener('mousemove', function(event) {
 
 function clearEdition() {
   customPoints = [];
-  customArcs = [];
+  polygonInConstruction = [];
   clearCanvas();
 }
 
@@ -315,21 +351,119 @@ function drawEditionElements() {
       ctx.fillRect(customPoints[ptIndex].x - (pointWidth / 2), customPoints[ptIndex].y - (pointHeight / 2), pointWidth, pointHeight);
     }
     // Draw arcs
-    for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
-      point1 = findPointForId(customArcs[arcIndex][0]);
-      point2 = findPointForId(customArcs[arcIndex][1]);
-      ctx.strokeStyle = "#0f0";
-      ctx.beginPath();
-      ctx.moveTo(point1.x,point1.y);
-      ctx.lineTo(point2.x, point2.y);
-      ctx.stroke();
+    if (2 <= polygonInConstruction.length) {
+      for (var i = 1; i < polygonInConstruction.length; i++) {
+        point1 = findPointForId(polygonInConstruction[i - 1]);
+        point2 = findPointForId(polygonInConstruction[i]);
+        ctx.strokeStyle = "#0f0";
+        ctx.beginPath();
+        ctx.moveTo(point1.x,point1.y);
+        ctx.lineTo(point2.x, point2.y);
+        ctx.stroke();
+      }
     }
   }
 }
 
+// function buildSpanningTree(current, father, explored, depth) {
+//   // Find neighbors
+//   var neighbors = []
+//   for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
+//     if (current == customArcs[arcIndex][0]) {
+//       neighbors.push(customArcs[arcIndex][1]);
+//     } else if (current == customArcs[arcIndex][1]) {
+//       neighbors.push(customArcs[arcIndex][0]);
+//     }
+//   }
+//
+//   // Keep only neighbors that were not explored
+//   var newNeighbors = []
+//   for (var nbId = 0; nbId < neighbors.length; nbId++) {
+//     var wasExplored = false;
+//     for (var xpldId = 0; xpldId < explored.length; xpldId++) {
+//       if (neighbors[nbId] == explored[xpldId]) {
+//         wasExplored = true;
+//       }
+//     }
+//     if (!wasExplored) {
+//       newNeighbors.push(neighbors[nbId]);
+//     }
+//   }
+//
+//   if (newNeighbors.length == 0) {
+//     // Trivial case: all neighbors were explored or no neighbors
+//     return {pt: current, father: father, sons: []};
+//   } else {
+//     var sons = [];
+//     var newExplored = [];
+//     for (var k = 0; k < explored.length; k++) {
+//       newExplored.push(explored[k]);
+//     }
+//     newExplored.push(current);
+//     for (var nbr = 0; nbr < newNeighbors.length; nbr++) {
+//       sons.push(buildSpanningTree(newNeighbors[nbr], current, newExplored, depth+1));
+//     }
+//     return {pt: current, father: father, sons: sons};
+//   }
+// }
+//
+// var allIdentifiedPolygons = [];
+// function identifyPolygons(tree, entryPoint=-1, pointList=[]) {
+//   if (tree.father == -1) {
+//     // Tree base, set entry point
+//     for (var i = 0; i < tree.sons.length; i++) {
+//       identifyPolygons(tree.sons[i], tree.pt, [tree.pt]);
+//     }
+//   } else {
+//     // Compute new point list
+//     var newPointList = []
+//     for (var i = 0; i < pointList.length; i++) {
+//       newPointList.push(pointList[i])
+//     }
+//     newPointList.push(tree.pt)
+//
+//     // Add possible polys to identified ones
+//     if (newPointList.length >= 3) {
+//       // Find neighbors
+//       var neighbors = []
+//       for (var arcIndex = 0; arcIndex < customArcs.length; arcIndex++) {
+//         if (tree.pt == customArcs[arcIndex][0]) {
+//           neighbors.push(customArcs[arcIndex][1]);
+//         } else if (tree.pt == customArcs[arcIndex][1]) {
+//           neighbors.push(customArcs[arcIndex][0]);
+//         }
+//       }
+//       // Add poly if entry point in neighbors
+//       for (var n = 0; n < neighbors.length; n++) {
+//         if (neighbors[n] == entryPoint) {
+//           allIdentifiedPolygons.push(newPointList);
+//         }
+//       }
+//     }
+//
+//     for (var i = 0; i < tree.sons.length; i++) {
+//       identifyPolygons(tree.sons[i], entryPoint, newPointList);
+//     }
+//   }
+// }
+
 // This method is in charge of extracting polygons from the custom layout edition mode, apply them and trigger the drawing with drawEverything().
 function drawCustomLayout() {
   editionCheckbox.checked = false;
+  allIdentifiedPolygons = [];
+  // console.log(customPoints);
+  // console.log(customArcs);
+
+
+  // // For all points
+  // for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
+  //     tree = buildSpanningTree(customPoints[ptIndex].id, -1, [], 0);
+  //     console.log('------');
+  //     console.log(tree);
+  //     identifyPolygons(tree);
+  //     console.log('All identified polygons')
+  //     console.log(allIdentifiedPolygons);
+  // }
 
   clearCanvas();
   polygons = [];
