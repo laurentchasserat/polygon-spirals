@@ -172,6 +172,39 @@ function drawEverything() {
   }
 }
 
+function extractPolyFromArcs(arcs) {
+  if (arcs.length >= 3) {
+    for (var arcIndex = 0; arcIndex < arcs.length; arcIndex++) {
+      var remainingArcs = Array.from(arcs);
+      remainingArcs.splice(arcIndex, 1);
+      var firstElt = arcs[arcIndex][0];
+      var head = arcs[arcIndex][1];
+      var tempResult = [firstElt];
+      var trys = 0;
+      var maxTrys = remainingArcs.length;
+      while (trys <= maxTrys && head != firstElt) {
+        for (var k = 0; k < remainingArcs.length; k++) {
+          if (remainingArcs[k][0] == head) {
+            tempResult.push(head);
+            head = remainingArcs[k][1];
+            remainingArcs.splice(k, 1);
+          } else if (remainingArcs[k][1] == head) {
+            tempResult.push(head);
+            head = remainingArcs[k][0];
+            remainingArcs.splice(k, 0);
+          }
+        }
+        trys++;
+      }
+
+      if (head == firstElt) {
+        return tempResult;
+      }
+    }
+  }
+  return [];
+}
+
 // To process click events
 var editionPointNumber = 0;
 var customPoints = [];
@@ -283,6 +316,12 @@ canvas.addEventListener('mouseup', function(event) {
       // Add arc to list and set new departure
       if (startId != null && stopId != null && startId != stopId) {
         polygonInConstruction.push([startId, stopId]);
+        // Check if a polygon was formed
+        p = extractPolyFromArcs(polygonInConstruction);
+        if (p.length >= 3) {
+          customPolygons.push(p)
+          polygonInConstruction = [];
+        }
       }
     }
 
@@ -322,6 +361,7 @@ canvas.addEventListener('mousemove', function(event) {
 
 function clearEdition() {
   customPoints = [];
+  customPolygons = [];
   polygonInConstruction = [];
   clearCanvas();
 }
@@ -355,6 +395,17 @@ function drawEditionElements() {
         ctx.moveTo(point1.x,point1.y);
         ctx.lineTo(point2.x, point2.y);
         ctx.stroke();
+      }
+    }
+    // Draw polygons
+    if (customPolygons.length > 0) {
+      for (var i = 0; i < customPolygons.length; i++) {
+        thePoly = []
+        for (var j = 0; j < customPolygons[i].length; j++) {
+          thePoint = findPointForId(customPolygons[i][j]);
+          thePoly.push({x: thePoint.x, y: thePoint.y})
+        }
+        drawPolygon(thePoly);
       }
     }
   }
@@ -445,23 +496,17 @@ function drawEditionElements() {
 // This method is in charge of extracting polygons from the custom layout edition mode, apply them and trigger the drawing with drawEverything().
 function drawCustomLayout() {
   editionCheckbox.checked = false;
-  allIdentifiedPolygons = [];
-  // console.log(customPoints);
-  // console.log(customArcs);
-
-
-  // // For all points
-  // for (var ptIndex = 0; ptIndex < customPoints.length; ptIndex++) {
-  //     tree = buildSpanningTree(customPoints[ptIndex].id, -1, [], 0);
-  //     console.log('------');
-  //     console.log(tree);
-  //     identifyPolygons(tree);
-  //     console.log('All identified polygons')
-  //     console.log(allIdentifiedPolygons);
-  // }
-
+  thePolys = []
+  for (var i = 0; i < customPolygons.length; i++) {
+    thePoly = []
+    for (var j = 0; j < customPolygons[i].length; j++) {
+      thePoint = findPointForId(customPolygons[i][j]);
+      thePoly.push({x: thePoint.x, y: thePoint.y})
+    }
+    thePolys.push(thePoly);
+  }
+  polygons = thePolys;
   clearCanvas();
-  polygons = [];
   drawEverything();
 }
 
